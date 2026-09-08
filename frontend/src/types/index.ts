@@ -62,6 +62,8 @@ export interface Alert {
   acknowledged_at?: string;
   created_at: string;
   snapshot_url?: string;
+  confidence?: number;
+  contributing_factors?: string[];
 }
 
 export interface ExplainableFactor {

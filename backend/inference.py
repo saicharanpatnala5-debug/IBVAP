@@ -257,11 +257,11 @@ class MultiObjectYOLOPipeline:
 
     def __init__(
         self,
-        confidence_threshold: float = 0.50,
+        confidence_threshold: float = 0.58,
         nms_threshold: float = 0.40,
         classes: Optional[List[str]] = None
     ):
-        self.confidence_threshold = confidence_threshold  # Strictly 0.50
+        self.confidence_threshold = confidence_threshold  # Strictly 0.58 (tuned for night)
         self.nms_threshold = nms_threshold                # Strictly 0.40
         self.classes = classes or ["person", "vehicle", "heavy_vehicle", "weapon", "wildlife"]
         
@@ -429,7 +429,7 @@ class BorderInferenceEngine:
 
     def __init__(
         self,
-        confidence_threshold: float = 0.50,
+        confidence_threshold: float = 0.58,
         nms_threshold: float = 0.40
     ):
         self.detector = MultiObjectYOLOPipeline(

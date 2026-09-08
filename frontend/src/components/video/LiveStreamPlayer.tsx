@@ -1,9 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { HUDOverlay } from './HUDOverlay';
 import { TacticalDetectionOverlay } from './TacticalDetectionOverlay';
-import { Camera, DetectionClass } from '../../types';
+import { Camera, DetectionClass, TacticalDetection } from '../../types';
 import { getCameraVideoUrl } from '../../utils/videoFeeds';
-import { getDetectionsForTime, computeTelemetry } from '../../utils/detectionEngine';
+import { captureAndInferFrame, computeTelemetry } from '../../utils/detectionEngine';
+import { pushLiveAlert } from '../../hooks/useAlerts';
+import { Alert } from '../../types';
 import { 
   Play, Pause, RotateCcw, Repeat, Maximize, Volume2, VolumeX, 
   Radio, Scan, Crosshair, Camera as CameraIcon, User, Car, Sparkles
@@ -49,14 +51,82 @@ export const LiveStreamPlayer: React.FC<LiveStreamPlayerProps> = ({
 
   const videoSource = customVideoUrl || getCameraVideoUrl(camera.camera_id, camera.stream_url);
 
-  // Compute synchronized detections for current playback timestamp with title hint
-  const detections = getDetectionsForTime(
-    customVideoTitle || customVideoUrl || camera.camera_id,
-    currentTime,
-    duration,
-    customVideoTitle || customVideoUrl || camera.name
-  );
+  // Real-time detections state strictly bound to backend FastAPI response (starts empty: [])
+  const [detections, setDetections] = useState<TacticalDetection[]>([]);
+  const isInferringRef = useRef<boolean>(false);
+  const alertedTracksRef = useRef<Set<string>>(new Set());
   const telemetry = computeTelemetry(detections);
+
+  // Clear detections & cache on stream or video reset
+  useEffect(() => {
+    alertedTracksRef.current.clear();
+    setDetections([]);
+  }, [camera.camera_id, customVideoUrl]);
+
+  // Real-time backend inference loop: queries FastAPI endpoint with live video frames
+  useEffect(() => {
+    let active = true;
+    let timerId: any = null;
+
+    const runInference = async () => {
+      if (!active || !videoRef.current || videoRef.current.paused || videoRef.current.ended) {
+        return;
+      }
+      if (isInferringRef.current) return;
+
+      try {
+        isInferringRef.current = true;
+        const result = await captureAndInferFrame(
+          videoRef.current,
+          camera.camera_id,
+          camera.sensor_type === 'THERMAL_LWIR'
+        );
+
+        if (active) {
+          // Strictly bind detections state to backend response. If backend returns [], screen draws nothing.
+          const freshDetections = Array.isArray(result) ? result : (Array.isArray(result?.detections) ? result.detections : []);
+          setDetections(freshDetections);
+
+          // Evaluate live detections for critical/high threats
+          freshDetections.forEach((d: TacticalDetection) => {
+            if (d.threat_level === 'CRITICAL' || d.threat_level === 'HIGH') {
+              const dedupeKey = `${camera.camera_id}-${d.track_id}`;
+              if (!alertedTracksRef.current.has(dedupeKey)) {
+                alertedTracksRef.current.add(dedupeKey);
+
+                const isCritical = d.threat_level === 'CRITICAL';
+                const liveAlert: Alert = {
+                  alert_id: `ALT-${Date.now().toString(36).toUpperCase()}-${d.track_id.replace(/[^a-zA-Z0-9]/g, '')}`,
+                  camera_id: camera.camera_id,
+                  severity: isCritical ? 'CRITICAL' : 'HIGH',
+                  rule_triggered: isCritical ? 'ZONE_INTRUSION' : 'PERIMETER_BREACH',
+                  message: `${d.label} [${d.track_id}] - Threat detected at ${camera.name || camera.camera_id}`,
+                  risk_score: isCritical ? 95 : 75,
+                  status: 'ACTIVE',
+                  created_at: new Date().toISOString(),
+                  confidence: d.confidence,
+                };
+
+                pushLiveAlert(liveAlert);
+              }
+            }
+          });
+        }
+      } catch {
+        if (active) setDetections([]);
+      } finally {
+        isInferringRef.current = false;
+      }
+    };
+
+    // Continuous real-time inference loop while playing
+    timerId = setInterval(runInference, 320);
+
+    return () => {
+      active = false;
+      clearInterval(timerId);
+    };
+  }, [camera.camera_id, camera.name, camera.sensor_type, customVideoUrl]);
 
   useEffect(() => {
     if (videoRef.current) {

@@ -22,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
       id: 'alerts', 
       label: 'Tactical Alerts', 
       icon: Bell, 
-      badge: activeAlertsCount > 0 ? String(activeAlertsCount) : undefined 
+      badge: String(alerts.length)
     },
   ];
 
@@ -65,7 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
               {!sidebarCollapsed && (
                 <div className="flex-1 flex items-center justify-between">
                   <span>{item.label}</span>
-                  {item.badge && (
+                  {item.badge !== undefined && (
                     <span className="px-1.5 py-0.5 rounded-full text-[9px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40">
                       {item.badge}
                     </span>

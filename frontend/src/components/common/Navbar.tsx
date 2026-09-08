@@ -147,11 +147,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
             title="View Active Alerts"
           >
             <Bell className="w-4 h-4 text-amber-400" />
-            {activeAlertsCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-[9px] font-bold font-mono text-white flex items-center justify-center">
-                {activeAlertsCount}
-              </span>
-            )}
+            <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-rose-500 text-[9px] font-bold font-mono text-white flex items-center justify-center">
+              {alerts.length}
+            </span>
           </button>
 
           <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">

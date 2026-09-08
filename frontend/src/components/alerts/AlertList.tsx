@@ -55,7 +55,16 @@ export const AlertList: React.FC<AlertListProps> = ({
       </div>
 
       <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
-        {filteredAlerts.length === 0 ? (
+        {alerts.length === 0 ? (
+          <div className="py-8 px-4 text-center space-y-2">
+            <p className="text-xs font-mono text-slate-400 font-semibold">
+              No active threat alerts.
+            </p>
+            <p className="text-[11px] font-mono text-slate-500">
+              AI perception pipeline monitoring live feeds. Alerts appear dynamically when risk threshold is exceeded.
+            </p>
+          </div>
+        ) : filteredAlerts.length === 0 ? (
           <p className="text-xs font-mono text-slate-500 py-6 text-center">
             No active alerts matching filter.
           </p>

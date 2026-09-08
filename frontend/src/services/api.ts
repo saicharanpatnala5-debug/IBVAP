@@ -76,40 +76,7 @@ export const MOCK_CAMERAS: Camera[] = [
   }
 ];
 
-export const MOCK_ALERTS: Alert[] = [
-  {
-    alert_id: 'ALT-20260906-001',
-    camera_id: 'CAM-03',
-    severity: 'HIGH',
-    rule_triggered: 'ZONE_INTRUSION_RED_RESTRICTED',
-    message: 'Perimeter fence physical traversal detected at Grid 31.245N, 74.821E',
-    risk_score: 110,
-    status: 'ACTIVE',
-    created_at: new Date(Date.now() - 4 * 60000).toISOString(),
-    snapshot_url: '/storage/snapshots/ev_CAM-03_latest.jpg'
-  },
-  {
-    alert_id: 'ALT-20260906-002',
-    camera_id: 'CAM-02',
-    severity: 'HIGH',
-    rule_triggered: 'ANPR_HOTLIST_MATCH',
-    message: 'Blacklisted Reconnaissance Vehicle [DL01AB1234] sighted at North Gate',
-    risk_score: 95,
-    status: 'ACTIVE',
-    created_at: new Date(Date.now() - 12 * 60000).toISOString(),
-  },
-  {
-    alert_id: 'ALT-20260906-003',
-    camera_id: 'CAM-01',
-    severity: 'MEDIUM',
-    rule_triggered: 'LOITERING_DWELL_EXCEEDED',
-    message: 'Subject loitering (>45s) in Approach Buffer Corridor',
-    risk_score: 65,
-    status: 'ACKNOWLEDGED',
-    acknowledged_by: 'Head Constable A. Sharma',
-    created_at: new Date(Date.now() - 34 * 60000).toISOString(),
-  }
-];
+export const MOCK_ALERTS: Alert[] = [];
 
 export const MOCK_INCIDENTS: Incident[] = [
   {
@@ -176,7 +143,7 @@ export async function fetchAlerts(): Promise<Alert[]> {
   } catch (e) {
     console.warn('Backend offline, using tactical mock alerts', e);
   }
-  return MOCK_ALERTS;
+  return [];
 }
 
 export async function fetchIncidents(): Promise<Incident[]> {

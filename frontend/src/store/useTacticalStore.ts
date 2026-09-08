@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Camera, Alert, Incident } from '../types';
-import { MOCK_CAMERAS, MOCK_ALERTS, MOCK_INCIDENTS } from '../services/api';
+import { MOCK_CAMERAS, MOCK_INCIDENTS } from '../services/api';
 
 interface State {
   selectedCameraId: string;
@@ -17,7 +17,7 @@ let globalState: State = {
   threatLevel: 'HIGH',
   audioAlertsEnabled: true,
   sidebarCollapsed: false,
-  activeIncidentsCount: 3,
+  activeIncidentsCount: 0,
 };
 
 const listeners = new Set<(s: State) => void>();
