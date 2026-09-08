@@ -123,3 +123,5 @@ ehthumbs_vista.db
 
 # Other
 scratch/
+
+backend/app/static/videos/*.mp4
