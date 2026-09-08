@@ -1,0 +1,54 @@
+# =========================================================================
+# IBVAP - Central Command Backend Production Container
+# Multi-Stage Build: Python 3.11-slim + PyTorch/OpenCV Headless Runtime
+# SIH 2026 | Problem Statement: SIH26187 (SSB / MHA)
+# =========================================================================
+
+# Stage 1: Build Dependencies
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential gcc libpq-dev git curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Stage 2: Minimal Tactical Runtime
+FROM python:3.11-slim AS runtime
+
+LABEL maintainer="IBVAP Tactical Engineering <engineering@ibvap.gov.in>"
+LABEL version="2.0.0-PROD"
+LABEL description="Intelligent Border Video Analytics Central Server"
+
+WORKDIR /app
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/root/.local/bin:$PATH" \
+    STORAGE_DIR="/app/storage"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 libglib2.0-0 libgomp1 ffmpeg curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy built wheels from stage 1
+COPY --from=builder /root/.local /root/.local
+
+# Copy backend application source
+COPY backend/app /app/app
+COPY backend/tests /app/tests
+COPY configs /app/configs
+COPY storage /app/storage
+
+# Create non-root tactical user for DPDP compliance
+RUN useradd -u 1001 -r -s /bin/false ibvap && \
+    chown -R ibvap:ibvap /app
+
+USER ibvap
+EXPOSE 8000
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:8000/api/health || exit 1
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

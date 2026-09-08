@@ -1,0 +1,177 @@
+# ==============================================================================
+# IBVAP: Intelligent Border Video Analytics Platform
+# Camera Infrastructure & Topological Network Specification
+# Standard: SIH 2026 | Problem Statement: SIH26187 (SSB / Ministry of Home Affairs)
+# Deployment Site: Border Out Post (BOP) Alpha - Sector B Strategic Sector
+# ==============================================================================
+
+version: "2.0"
+site:
+  bop_id: "BOP-ALPHA"
+  site_name: "Border Out Post Alpha"
+  jurisdiction: "Sashastra Seema Bal (SSB), Sector B Command"
+  geographic_datum: "WGS84"
+  elevation_meters: 1420
+  coordinates:
+    center_latitude: 28.6139
+    center_longitude: 77.2090
+
+# ------------------------------------------------------------------------------
+# Camera Feeds & Hardware Profiles (Camera-Agnostic Ingestion)
+# ------------------------------------------------------------------------------
+cameras:
+  - camera_id: "CAM-01"
+    name: "BOP Alpha - Main Approach Road & Perimeter Gate"
+    sector: "Sector-B"
+    location_description: "Southbound arterial border approach road 120m from zero line"
+    latitude: 28.6139
+    longitude: 77.2090
+    sensor_type: "DUAL_DAY_NIGHT_IR" # Optical Day + Infrared Night
+    stream:
+      protocol: "RTSP"
+      stream_url: "rtsp://192.168.1.101:554/live/ch0"
+      substream_url: "rtsp://192.168.1.101:554/live/ch1_sub"
+      codec: "H.265"
+      resolution: "1920x1080"
+      fps: 25.0
+      bitrate_kbps: 4096
+    optics:
+      focal_length_mm: 8.0
+      horizontal_fov_degrees: 92.0
+      night_vision_ir_range_meters: 120.0
+      ptz_enabled: false
+    edge_node:
+      node_id: "EDGE-NODE-ALPHA-01"
+      inference_profile: "YOLO26_HIGH_THROUGHPUT"
+      buffer_allocated_mb: 512
+    health:
+      heartbeat_interval_seconds: 5.0
+      max_packet_loss_allowed_pct: 5.0
+      latency_threshold_ms: 250.0
+      auto_reconnect_retry_limit: 10
+      reconnect_backoff_seconds: 3.0
+    active: true
+
+  - camera_id: "CAM-02"
+    name: "BOP Alpha - North Perimeter Gate Checkpoint"
+    sector: "Sector-B"
+    location_description: "Authorized personnel and vehicle access inspection point"
+    latitude: 28.6148
+    longitude: 77.2098
+    sensor_type: "HIGH_RES_OPTICAL_ANPR"
+    stream:
+      protocol: "RTSP"
+      stream_url: "rtsp://192.168.1.102:554/live/ch0"
+      codec: "H.264"
+      resolution: "3840x2160" # 4K Ultra HD for license plate localization
+      fps: 30.0
+      bitrate_kbps: 8192
+    optics:
+      focal_length_mm: 16.0
+      horizontal_fov_degrees: 48.0
+      shutter_speed: "1/1000s" # High shutter speed to freeze high-speed plates
+      night_vision_ir_range_meters: 60.0
+      ptz_enabled: false
+    edge_node:
+      node_id: "EDGE-NODE-ALPHA-01"
+      inference_profile: "ANPR_PADDLE_DUAL"
+      buffer_allocated_mb: 512
+    health:
+      heartbeat_interval_seconds: 5.0
+      max_packet_loss_allowed_pct: 3.0
+      latency_threshold_ms: 200.0
+    active: true
+
+  - camera_id: "CAM-03"
+    name: "BOP Alpha - Sensitive Border Fence Zero-Tolerance Line"
+    sector: "Sector-B"
+    location_description: "Physical fencing buffer with high-risk vulnerable terrain"
+    latitude: 28.6155
+    longitude: 77.2112
+    sensor_type: "THERMAL_LWIR_AND_VISIBLE" # Long-Wave Infrared Thermal Core
+    stream:
+      protocol: "RTSP"
+      stream_url: "rtsp://192.168.1.103:554/live/ch0"
+      codec: "H.265"
+      resolution: "1920x1080"
+      fps: 25.0
+      bitrate_kbps: 3072
+    optics:
+      thermal_spectral_band_um: "8-14"
+      thermal_sensitivity_netd_mk: 40.0
+      horizontal_fov_degrees: 65.0
+      intrusion_detection_range_meters: 350.0
+    edge_node:
+      node_id: "EDGE-NODE-ALPHA-02"
+      inference_profile: "THERMAL_NIGHT_ENHANCED"
+      buffer_allocated_mb: 1024
+    health:
+      heartbeat_interval_seconds: 3.0
+      max_packet_loss_allowed_pct: 2.0
+      latency_threshold_ms: 150.0
+    active: true
+
+  - camera_id: "CAM-07"
+    name: "BOP Alpha - Inner Installation Strategic Depot"
+    sector: "Sector-B"
+    location_description: "Command and communications infrastructure inner perimeter"
+    latitude: 28.6162
+    longitude: 77.2125
+    sensor_type: "STARLIGHT_LOW_LIGHT"
+    stream:
+      protocol: "RTSP"
+      stream_url: "rtsp://192.168.1.107:554/live/ch0"
+      codec: "H.265"
+      resolution: "1920x1080"
+      fps: 25.0
+      bitrate_kbps: 4096
+    optics:
+      min_illumination_lux: 0.0005
+      horizontal_fov_degrees: 84.0
+      ptz_enabled: true
+    edge_node:
+      node_id: "EDGE-NODE-ALPHA-02"
+      inference_profile: "ZERO_TOLERANCE_DEPOT"
+      buffer_allocated_mb: 512
+    health:
+      heartbeat_interval_seconds: 5.0
+      latency_threshold_ms: 180.0
+    active: true
+
+# ------------------------------------------------------------------------------
+# Multi-Camera Graph Topology (Used by Predictive Camera Handoff Engine)
+# Directed edges with transition probabilities and transit time windows (seconds)
+# ------------------------------------------------------------------------------
+topology_graph:
+  edges:
+    - from_camera: "CAM-01"
+      to_camera: "CAM-03"
+      transition_probability: 0.78 # 78% probability of moving toward border fence
+      min_transit_seconds: 15.0
+      max_transit_seconds: 45.0
+      distance_meters: 60.0
+      tactical_corridor: "Eastbound Footpath along Ridge"
+
+    - from_camera: "CAM-01"
+      to_camera: "CAM-02"
+      transition_probability: 0.22
+      min_transit_seconds: 20.0
+      max_transit_seconds: 60.0
+      distance_meters: 85.0
+      tactical_corridor: "Paved Road toward North Gate"
+
+    - from_camera: "CAM-03"
+      to_camera: "CAM-07"
+      transition_probability: 0.82 # Target breach vector heading to command depot
+      min_transit_seconds: 25.0
+      max_transit_seconds: 70.0
+      distance_meters: 110.0
+      tactical_corridor: "Culvert and Drainage Perimeter Access"
+
+    - from_camera: "CAM-07"
+      to_camera: "CAM-08"
+      transition_probability: 0.90
+      min_transit_seconds: 15.0
+      max_transit_seconds: 40.0
+      distance_meters: 50.0
+      tactical_corridor: "Inner Command Perimeter Pathway"

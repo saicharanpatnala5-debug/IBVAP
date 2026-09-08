@@ -1,0 +1,25 @@
+# IBVAP - Tactical Border Analytics YOLO Dataset
+# SIH 2026 | Problem Statement: SIH26187 (SSB / Ministry of Home Affairs)
+
+path: C:/Users/SAI CHARAN/OneDrive/Desktop/IBVAP/datasets
+train: processed/train/images
+val: processed/val/images
+test: processed/test/images
+
+names:
+  0: person
+  1: vehicle
+  2: license_plate
+  3: face
+  4: intruder
+  5: weapon_contraband
+
+# Metadata telemetry
+metadata:
+  site: BOP Alpha - Indo-Nepal Strategic Sector B
+  sensors:
+    - Optical 4K 25FPS
+    - Thermal LWIR 640x512
+    - Checkpoint ANPR Starlight
+  date_generated: "2026-09-06"
+  compliance: DPDP Act 2023 Section 8 (Synthetic Edge Generation)

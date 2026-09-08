@@ -1,0 +1,46 @@
+# ==============================================================================
+# IBVAP: Tactical Forward Border Outpost (BOP) Edge Deployment Compose
+# Standard: Smart India Hackathon (SIH 2026) | Problem Statement: SIH26187
+# Target Site: Border Out Post Alpha - Sector B Tactical Edge Node
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  ibvap-edge-alpha-01:
+    build:
+      context: ..
+      dockerfile: edge/Dockerfile
+    container_name: ibvap-edge-node-alpha-01
+    restart: unless-stopped
+    privileged: true # Enables access to physical hardware video capture devices
+    network_mode: host # Optimal for low-latency RTSP streaming ingestion
+    environment:
+      - EDGE_NODE_ID=EDGE-NODE-ALPHA-01
+      - BOP_ID=BOP-ALPHA
+      - SECTOR=Sector-B
+      - CENTRAL_SERVER_URL=http://127.0.0.1:8000
+      - SYNC_INTERVAL_SECONDS=15
+      - LOCAL_BUFFER_CAPACITY=50000
+      - HARDWARE_ACCELERATION=AUTO
+      - LOG_LEVEL=INFO
+      - AES_STORAGE_ENCRYPTION_KEY=IBVAP_TACTICAL_AES256_KEY_SECTOR_B_2026
+    volumes:
+      - ../storage/edge_buffer:/app/storage/edge_buffer
+      - ../storage/edge_evidence:/app/storage/edge_evidence
+      - ../storage/logs:/app/storage/logs
+      - ../configs:/app/configs:ro
+      - /dev:/dev:ro # Camera devices pass-through
+    deploy:
+      resources:
+        limits:
+          cpus: '2.50'
+          memory: 2048M
+        reservations:
+          cpus: '0.50'
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import os; exit(0 if os.path.exists("/app/storage/edge_buffer/edge_events.db") else 1)'"]
+      interval: 20s
+      timeout: 5s
+      retries: 3

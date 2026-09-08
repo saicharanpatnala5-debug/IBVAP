@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+  external_labels:
+    site: "BOP-ALPHA"
+    cluster: "SECTOR-B"
+
+rule_files:
+  - "alert_rules.yml"
+
+scrape_configs:
+  # 1. IBVAP Central FastAPI Backend Metrics
+  - job_name: "ibvap_backend"
+    metrics_path: "/api/health"
+    static_configs:
+      - targets: ["backend:8000"]
+    relabel_configs:
+      - target_label: "subsystem"
+        replacement: "central_api"
+
+  # 2. Remote Forward Edge Nodes
+  - job_name: "ibvap_edge_fleet"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["host.docker.internal:9090"]
+        labels:
+          node_id: "BOP-ALPHA-NODE-01"
+          role: "forward_perimeter"
+
+  # 3. Prometheus Self-Monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]

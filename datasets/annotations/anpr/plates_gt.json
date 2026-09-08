@@ -1,0 +1,86 @@
+[
+  {
+    "image_file": "bop_anpr_001.jpg",
+    "plate_number": "DL01AB1234",
+    "state_jurisdiction": "Delhi NCT",
+    "vehicle_model": "Mahindra Bolero",
+    "hotlist_threat": "STOLEN_ARMS_SMUGGLING",
+    "is_hotlisted": true,
+    "plate_bbox": [
+      120,
+      100,
+      360,
+      100
+    ]
+  },
+  {
+    "image_file": "bop_anpr_002.jpg",
+    "plate_number": "HR26DQ5555",
+    "state_jurisdiction": "Haryana",
+    "vehicle_model": "Tata Xenon 4x4",
+    "hotlist_threat": "NORMAL",
+    "is_hotlisted": false,
+    "plate_bbox": [
+      120,
+      100,
+      360,
+      100
+    ]
+  },
+  {
+    "image_file": "bop_anpr_003.jpg",
+    "plate_number": "UP16Z9876",
+    "state_jurisdiction": "Uttar Pradesh",
+    "vehicle_model": "Maruti Gypsy",
+    "hotlist_threat": "RECONNAISSANCE_PROBE",
+    "is_hotlisted": true,
+    "plate_bbox": [
+      120,
+      100,
+      360,
+      100
+    ]
+  },
+  {
+    "image_file": "bop_anpr_004.jpg",
+    "plate_number": "UK07AB3322",
+    "state_jurisdiction": "Uttarakhand",
+    "vehicle_model": "Toyota Hilux",
+    "hotlist_threat": "NORMAL",
+    "is_hotlisted": false,
+    "plate_bbox": [
+      120,
+      100,
+      360,
+      100
+    ]
+  },
+  {
+    "image_file": "bop_anpr_005.jpg",
+    "plate_number": "WB02X1111",
+    "state_jurisdiction": "West Bengal",
+    "vehicle_model": "Isuzu D-Max",
+    "hotlist_threat": "NARCOTICS_HOTLIST",
+    "is_hotlisted": true,
+    "plate_bbox": [
+      120,
+      100,
+      360,
+      100
+    ]
+  },
+  {
+    "image_file": "bop_anpr_006.jpg",
+    "plate_number": "PB02XY9999",
+    "state_jurisdiction": "Punjab",
+    "vehicle_model": "Mahindra Scorpio",
+    "hotlist_threat": "SUSPICIOUS_TRANSFER",
+    "is_hotlisted": true,
+    "plate_bbox": [
+      120,
+      100,
+      360,
+      100
+    ]
+  }
+]

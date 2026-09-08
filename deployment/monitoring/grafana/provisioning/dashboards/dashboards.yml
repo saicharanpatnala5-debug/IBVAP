@@ -1,0 +1,10 @@
+apiVersion: 1
+providers:
+  - name: 'IBVAP Defense Dashboards'
+    orgId: 1
+    folder: 'Border Tactical Ops'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

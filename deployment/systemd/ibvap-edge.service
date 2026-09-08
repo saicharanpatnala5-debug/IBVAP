@@ -1,0 +1,17 @@
+[Unit]
+Description=IBVAP Forward Border Outpost (BOP) Edge Analytics Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/ibvap
+Environment="PATH=/opt/ibvap/venv/bin:/usr/local/bin:/usr/bin"
+EnvironmentFile=/etc/ibvap/edge.env
+ExecStart=/opt/ibvap/venv/bin/python -m edge.main --duration 0
+Restart=always
+RestartSec=3s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

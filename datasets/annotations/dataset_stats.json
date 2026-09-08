@@ -1,0 +1,27 @@
+{
+  "dataset_name": "IBVAP-Tactical-Border-V1",
+  "generated_timestamp": "2026-09-06T11:23:12.090963+00:00",
+  "total_images_processed": 20,
+  "split_breakdown": {
+    "train": 12,
+    "val": 4,
+    "test": 4
+  },
+  "modalities": {
+    "optical_daylight": 8,
+    "thermal_lwir": 6,
+    "anpr_highres_bumper": 6,
+    "face_biometric_gallery": 6
+  },
+  "video_scenarios_count": 4,
+  "total_video_duration_seconds": 12.0,
+  "classes_distribution": {
+    "person": 18,
+    "vehicle": 12,
+    "license_plate": 8,
+    "face": 6,
+    "intruder": 8,
+    "weapon_contraband": 2
+  },
+  "synthetic_generation_engine": "IBVAP Autonomous Tactical Generator 2.0"
+}

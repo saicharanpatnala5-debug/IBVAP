@@ -1,0 +1,125 @@
+# =========================================================================
+# IBVAP - Enterprise Production Git Ignore Rules
+# =========================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+dist-ssr/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+*.manifest
+*.spec
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Automated Testing & Coverage
+.cache
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
+
+# Node / Frontend Artifacts (Vite/React)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.eslintcache
+.stylelintcache
+.next/
+out/
+coverage/
+
+# Local Secrets & Credentials
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+*.pem
+*.key
+!deployment/nginx/certs/generate_self_signed.sh
+
+# Databases & Runtime State
+*.sqlite3
+*.sqlite
+*.db
+*.db-shm
+*.db-wal
+*.log
+local_storage/*.db
+
+# Datasets and Large Media
+datasets/raw/
+datasets/processed/
+datasets/test-videos/
+datasets/**/*.mp4
+datasets/**/*.jpg
+datasets/**/*.png
+video/recordings/
+
+# Heavy Test Media & Video Buffers (Preserve schema and scripts)
+storage/snapshots/*.jpg
+storage/evidence/*.mp4
+storage/clips/*.mp4
+storage/buffer/*
+!storage/snapshots/.gitkeep
+!storage/evidence/.gitkeep
+
+# IDEs & System Files
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+ehthumbs_vista.db
+[Tt]humbs.db
+
+# Other
+scratch/

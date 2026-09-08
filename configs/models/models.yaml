@@ -1,0 +1,117 @@
+# ==============================================================================
+# IBVAP: AI/ML Models & Computer Vision Inference Configuration
+# Hardware Agnostic: CPU, NVIDIA CUDA, TensorRT, and DirectML Acceleration
+# Models: Ultralytics YOLO26 / YOLO11, ByteTrack, OpenCV Zoo YuNet/SFace, PaddleOCR
+# ==============================================================================
+
+version: "2.0"
+
+# ------------------------------------------------------------------------------
+# Object Detection (Perception Layer)
+# ------------------------------------------------------------------------------
+detection:
+  primary:
+    model_name: "YOLO26s-BorderPerception"
+    architecture: "YOLO26"
+    weights_path: "models/yolo26s.onnx"
+    weights_fallback_pt: "models/yolo26s.pt"
+    input_resolution: [640, 640]
+    confidence_threshold: 0.45
+    nms_iou_threshold: 0.50
+    half_precision_fp16: true
+    batch_size: 4
+    classes:
+      0: "person"
+      1: "bicycle"
+      2: "car"
+      3: "motorcycle"
+      5: "bus"
+      7: "truck"
+
+  edge_fallback:
+    model_name: "YOLO11n-UltraLight"
+    architecture: "YOLO11"
+    weights_path: "models/yolo11n.onnx"
+    input_resolution: [320, 320]
+    confidence_threshold: 0.38
+    quantization: "INT8"
+
+# ------------------------------------------------------------------------------
+# Multi-Object Tracking (Trajectory & Persistent Identity)
+# ------------------------------------------------------------------------------
+tracking:
+  algorithm: "ByteTrack"
+  track_buffer_frames: 30
+  high_detection_threshold: 0.60
+  low_detection_threshold: 0.20
+  match_iou_threshold: 0.80
+  kalman_filter:
+    state_dimensions: 8
+    measurement_dimensions: 4
+    process_noise_covariance: 0.05
+    measurement_noise_covariance: 0.005
+  trajectory_smoothing:
+    window_size: 5
+    velocity_estimation: "CENTROID_FINITE_DIFFERENCE"
+
+# ------------------------------------------------------------------------------
+# Automatic Number Plate Recognition (ANPR Pipeline)
+# ------------------------------------------------------------------------------
+anpr:
+  plate_detector:
+    model_name: "YOLO-Plate-v2"
+    min_aspect_ratio: 2.0
+    max_aspect_ratio: 5.5
+    confidence_threshold: 0.70
+  ocr_engine:
+    framework: "PaddleOCR-v4"
+    language: "en"
+    use_angle_cls: true
+    character_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    state_code_priors: ["DL", "HR", "PB", "JK", "UP", "MH", "KA", "WB", "RJ", "GJ", "CH"]
+  validation:
+    temporal_voting_window: 5
+    minimum_agreement_ratio: 0.60
+    syntax_enforcement: "^[A-Z]{2}[0-9]{1,2}[A-Z]{0,3}[0-9]{4}$"
+
+# ------------------------------------------------------------------------------
+# Face Analytics & Authorized Personnel Verification
+# ------------------------------------------------------------------------------
+face:
+  detector:
+    model: "YuNet"
+    backend: "OpenCV_Zoo"
+    input_size: [320, 320]
+    confidence_threshold: 0.75
+    min_face_size_pixels: 24
+  recognizer:
+    model: "SFace"
+    embedding_dimension: 128
+    distance_metric: "COSINE"
+    similarity_match_threshold: 0.75
+    mandatory_human_review: true # DPDP Act & PRD compliance: never automate threat conclusions
+
+# ------------------------------------------------------------------------------
+# Low-Light & Night-Vision Image Enhancement
+# ------------------------------------------------------------------------------
+preprocessing:
+  low_light_enhancement:
+    enabled: true
+    gamma_correction: 1.8
+    clahe_clip_limit: 2.5
+    clahe_tile_grid_size: [8, 8]
+    bilateral_filter_sigma_color: 75
+    bilateral_filter_sigma_space: 75
+
+# ------------------------------------------------------------------------------
+# Hardware Execution Providers
+# ------------------------------------------------------------------------------
+runtime:
+  preferred_backend: "TENSORRT"
+  fallback_hierarchy:
+    - "CUDA"
+    - "DIRECTML"
+    - "ONNXRUNTIME_CPU"
+    - "OPENCV_DNN"
+  threads: 4
+  allow_model_swapping: true

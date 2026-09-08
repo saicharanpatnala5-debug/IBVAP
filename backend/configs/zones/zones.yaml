@@ -1,0 +1,122 @@
+# ==============================================================================
+# IBVAP: Virtual Fence & Polygonal Security Zone Definitions
+# Standard: SIH 2026 | Problem Statement: SIH26187
+# Ray-Casting Point-in-Polygon (PIP) Coordinates & Behavioral Enforcement Rules
+# ==============================================================================
+
+version: "2.0"
+
+# ------------------------------------------------------------------------------
+# Polygonal Zones (Normalized Coordinates: [0.0, 0.0] top-left, [1.0, 1.0] bottom-right)
+# ------------------------------------------------------------------------------
+zones:
+  - zone_id: "ZONE-RED-01"
+    camera_id: "CAM-01"
+    name: "Perimeter Zero-Tolerance Restricted Area Alpha"
+    zone_type: "RED_RESTRICTED" # Zero-tolerance restricted perimeter
+    alert_level: "CRITICAL"
+    color_hex: "#FF0033"
+    polygon_coordinates:
+      - [0.350, 0.300]
+      - [0.750, 0.300]
+      - [0.750, 0.850]
+      - [0.350, 0.850]
+    rules:
+      dwell_threshold_seconds: 10.0 # Alert if target remains > 10s
+      direction_constraint: "INWARD_STRICT" # Inward vector triggers critical alarm
+      night_curfew_enforced: true
+      target_classes: ["person", "car", "truck", "motorcycle"]
+      authorized_passcode_bypass: false # Even authorized staff requires alert review
+    scoring:
+      base_risk_points: 30
+      loiter_bonus_points: 15
+    active: true
+
+  - zone_id: "ZONE-YEL-01"
+    camera_id: "CAM-01"
+    name: "Approach Buffer Monitoring Corridor"
+    zone_type: "YELLOW_MONITORING" # Monitoring buffer zone
+    alert_level: "MEDIUM"
+    color_hex: "#FFCC00"
+    polygon_coordinates:
+      - [0.100, 0.100]
+      - [0.900, 0.100]
+      - [0.900, 0.900]
+      - [0.100, 0.900]
+    rules:
+      dwell_threshold_seconds: 25.0 # Normal transit is allowed; loitering triggers alert
+      direction_constraint: "ANY"
+      target_classes: ["person", "car", "truck"]
+    scoring:
+      base_risk_points: 15
+      loiter_bonus_points: 15
+    active: true
+
+  - zone_id: "ZONE-RED-03"
+    camera_id: "CAM-03"
+    name: "Border Fence Physical Intrusion Zone"
+    zone_type: "RED_RESTRICTED"
+    alert_level: "CRITICAL"
+    color_hex: "#FF0000"
+    polygon_coordinates:
+      - [0.200, 0.400]
+      - [0.850, 0.400]
+      - [0.850, 0.950]
+      - [0.200, 0.950]
+    rules:
+      dwell_threshold_seconds: 0.0 # Instant alert on first frame touch
+      direction_constraint: "TOWARD_FENCE"
+      night_curfew_enforced: true
+      target_classes: ["person"]
+    scoring:
+      base_risk_points: 40
+      loiter_bonus_points: 20
+    active: true
+
+  - zone_id: "ZONE-RED-07"
+    camera_id: "CAM-07"
+    name: "Strategic Communications & Armory Depot Vault"
+    zone_type: "RED_RESTRICTED"
+    alert_level: "CRITICAL"
+    color_hex: "#8B0000"
+    polygon_coordinates:
+      - [0.250, 0.200]
+      - [0.750, 0.200]
+      - [0.750, 0.800]
+      - [0.250, 0.800]
+    rules:
+      dwell_threshold_seconds: 0.0
+      direction_constraint: "ANY"
+      siren_trigger_enabled: true
+      target_classes: ["person", "car", "truck"]
+    scoring:
+      base_risk_points: 50
+    active: true
+
+  - zone_id: "ZONE-GRN-02"
+    camera_id: "CAM-02"
+    name: "Checkpoint Authorized Vehicle Lane"
+    zone_type: "GREEN_NORMAL"
+    alert_level: "NORMAL"
+    color_hex: "#00FF66"
+    polygon_coordinates:
+      - [0.300, 0.500]
+      - [0.700, 0.500]
+      - [0.700, 0.900]
+      - [0.300, 0.900]
+    rules:
+      dwell_threshold_seconds: 60.0
+      anpr_inspection_required: true
+    scoring:
+      base_risk_points: 0
+    active: true
+
+# ------------------------------------------------------------------------------
+# Global Zone Schedules & Operational Curfews
+# ------------------------------------------------------------------------------
+schedules:
+  night_curfew:
+    start_time_utc: "13:30" # 19:00 IST
+    end_time_utc: "23:30"   # 05:00 IST
+    risk_multiplier: 1.5
+    zero_tolerance_all_zones: true

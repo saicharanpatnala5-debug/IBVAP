@@ -1,0 +1,15 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.coverage
+htmlcov/
+.git
+.gitignore
+.env
+*.db
+*.sqlite3
+*.log
+datasets/test-videos/*.mp4
+storage/snapshots/*

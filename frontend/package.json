@@ -1,0 +1,36 @@
+{
+    "name":  "ibvap-tactical-frontend",
+    "private":  true,
+    "version":  "1.0.0-SIH2026",
+    "type":  "module",
+    "description":  "Tactical Command Center Web Application for IBVAP - SIH 2026",
+    "scripts":  {
+                    "dev":  "vite",
+                    "build":  "tsc \u0026\u0026 vite build",
+                    "preview":  "vite preview"
+                },
+    "dependencies":  {
+                         "react":  "^18.3.1",
+                         "react-dom":  "^18.3.1",
+                         "lucide-react":  "^0.475.0",
+                         "clsx":  "^2.1.1",
+                         "tailwind-merge":  "^2.5.4",
+                         "@tabler/icons-react":  "^3.30.0",
+                         "motion":  "^12.4.7",
+                         "gsap":  "^3.12.5",
+                         "hls.js":  "^1.5.0",
+                         "react-router-dom":  "^6.22.3",
+                         "framer-motion":  "^11.0.8",
+                         "tailwindcss-animate":  "^1.0.7"
+                     },
+    "devDependencies":  {
+                            "@types/react":  "^18.3.12",
+                            "@types/react-dom":  "^18.3.1",
+                            "@vitejs/plugin-react":  "^4.3.3",
+                            "autoprefixer":  "^10.4.20",
+                            "postcss":  "^8.4.49",
+                            "tailwindcss":  "^3.4.15",
+                            "typescript":  "^5.6.3",
+                            "vite":  "^5.4.11"
+                        }
+}

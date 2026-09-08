@@ -1,0 +1,76 @@
+version: "3.8"
+
+# =========================================================================
+# IBVAP - Root Autonomous Orchestration Stack
+# SIH 2026 | Problem Statement: SIH26187 (SSB / MHA)
+# =========================================================================
+
+networks:
+  ibvap_mesh:
+    driver: bridge
+
+volumes:
+  ibvap_storage:
+  ibvap_edge_buffer:
+
+services:
+  # 1. Central Video Analytics Backend
+  backend:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+    container_name: ibvap_central_backend
+    restart: unless-stopped
+    networks:
+      - ibvap_mesh
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - DATABASE_URL=sqlite+aiosqlite:////app/ibvap.db
+      - STORAGE_DIR=/app/storage
+    volumes:
+      - ibvap_storage:/app/storage
+      - ./configs:/app/configs:ro
+      - ./ibvap.db:/app/ibvap.db
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # 2. Autonomous Forward Edge Node Daemon
+  edge_node:
+    build:
+      context: .
+      dockerfile: deployment/docker/Dockerfile.edge
+    container_name: ibvap_edge_daemon
+    restart: always
+    networks:
+      - ibvap_mesh
+    environment:
+      - EDGE_NODE_ID=BOP-ALPHA-NODE-01
+      - EDGE_MODE=STANDALONE_AUTONOMOUS
+    volumes:
+      - ibvap_edge_buffer:/edge/edge/local_storage
+      - ibvap_storage:/edge/storage
+      - ./configs:/edge/configs:ro
+    depends_on:
+      - backend
+
+  # 3. Tactical Nginx SSL Reverse Proxy
+  gateway:
+    image: nginx:alpine
+    container_name: ibvap_gateway
+    restart: unless-stopped
+    networks:
+      - ibvap_mesh
+    ports:
+      - "80:80"
+    volumes:
+      - ./deployment/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deployment/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ibvap_storage:/var/www/storage:ro
+    depends_on:
+      - backend

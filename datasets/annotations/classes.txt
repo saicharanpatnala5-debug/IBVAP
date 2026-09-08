@@ -1,0 +1,6 @@
+person
+vehicle
+license_plate
+face
+intruder
+weapon_contraband

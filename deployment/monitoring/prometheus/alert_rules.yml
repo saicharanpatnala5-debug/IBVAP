@@ -1,0 +1,31 @@
+groups:
+  - name: ibvap_tactical_alerts
+    rules:
+      - alert: PerimeterBreachSurge
+        expr: increase(ibvap_critical_events_total[1m]) > 5
+        for: 10s
+        labels:
+          severity: CRITICAL
+          corps: SSB_QRT
+        annotations:
+          summary: "Abnormal surge in perimeter fence intrusions"
+          description: "Over 5 critical perimeter breaches detected within 60 seconds at BOP Alpha."
+
+      - alert: CameraStreamLinkLoss
+        expr: ibvap_camera_fps == 0
+        for: 15s
+        labels:
+          severity: HIGH
+          action: DISPATCH_MAINTENANCE
+        annotations:
+          summary: "Border Camera Stream Offline"
+          description: "Camera {{ $labels.camera_id }} has ceased transmitting RTSP telemetry for > 15s."
+
+      - alert: EdgeOfflineBufferFilling
+        expr: ibvap_edge_queue_utilization_pct > 85
+        for: 30s
+        labels:
+          severity: WARNING
+        annotations:
+          summary: "Edge Node Buffer Exhaustion"
+          description: "Forward edge node local storage queue is over 85% full due to WAN disconnect."

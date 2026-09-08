@@ -1,0 +1,56 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "title": "IBVAP Tactical Defense Command Post - BOP Alpha",
+  "uid": "ibvap-command-v1",
+  "schemaVersion": 38,
+  "version": 1,
+  "timezone": "utc",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Active Border Cameras (Online / Total)",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": 2,
+      "title": "Current Risk Defense Posture",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      }
+    },
+    {
+      "id": 3,
+      "title": "Real-Time Perimeter Intrusion Rate (Events/min)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      }
+    },
+    {
+      "id": 4,
+      "title": "ANPR License Plate Detections & Watchlist Matches",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      }
+    }
+  ]
+}

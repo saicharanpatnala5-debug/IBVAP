@@ -1,0 +1,19 @@
+[Unit]
+Description=IBVAP Central Tactical Analytics Platform Daemon
+After=network.target postgresql.service redis.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=ibvap
+Group=ibvap
+WorkingDirectory=/opt/ibvap/backend
+Environment="PATH=/opt/ibvap/venv/bin:/usr/local/bin:/usr/bin"
+EnvironmentFile=/etc/ibvap/backend.env
+ExecStart=/opt/ibvap/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+Restart=always
+RestartSec=5s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

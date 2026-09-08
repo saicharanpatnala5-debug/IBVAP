@@ -1,0 +1,343 @@
+{
+  "info": {
+    "description": "IBVAP Tactical Border Surveillance Dataset",
+    "version": "1.0",
+    "year": 2026
+  },
+  "licenses": [
+    {
+      "id": 1,
+      "name": "Government Tactical Use Only"
+    }
+  ],
+  "categories": [
+    {
+      "id": 0,
+      "name": "person",
+      "supercategory": "border_surveillance"
+    },
+    {
+      "id": 1,
+      "name": "vehicle",
+      "supercategory": "border_surveillance"
+    },
+    {
+      "id": 2,
+      "name": "license_plate",
+      "supercategory": "border_surveillance"
+    },
+    {
+      "id": 3,
+      "name": "face",
+      "supercategory": "border_surveillance"
+    },
+    {
+      "id": 4,
+      "name": "intruder",
+      "supercategory": "border_surveillance"
+    },
+    {
+      "id": 5,
+      "name": "weapon_contraband",
+      "supercategory": "border_surveillance"
+    }
+  ],
+  "images": [
+    {
+      "id": 1,
+      "file_name": "bop_opt_001.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 2,
+      "file_name": "bop_opt_002.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 3,
+      "file_name": "bop_opt_003.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 4,
+      "file_name": "bop_opt_004.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 5,
+      "file_name": "bop_opt_005.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 6,
+      "file_name": "bop_opt_006.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 7,
+      "file_name": "bop_opt_007.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 8,
+      "file_name": "bop_opt_008.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 9,
+      "file_name": "bop_opt_009.jpg",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": 10,
+      "file_name": "bop_opt_010.jpg",
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "annotations": [
+    {
+      "id": 1,
+      "image_id": 1,
+      "category_id": 0,
+      "bbox": [
+        537,
+        360,
+        76,
+        172
+      ],
+      "area": 13072,
+      "iscrowd": 0
+    },
+    {
+      "id": 2,
+      "image_id": 1,
+      "category_id": 4,
+      "bbox": [
+        537,
+        360,
+        76,
+        172
+      ],
+      "area": 13072,
+      "iscrowd": 0
+    },
+    {
+      "id": 3,
+      "image_id": 2,
+      "category_id": 1,
+      "bbox": [
+        755,
+        388,
+        230,
+        158
+      ],
+      "area": 36340,
+      "iscrowd": 0
+    },
+    {
+      "id": 4,
+      "image_id": 2,
+      "category_id": 2,
+      "bbox": [
+        825,
+        503,
+        89,
+        28
+      ],
+      "area": 2492,
+      "iscrowd": 0
+    },
+    {
+      "id": 5,
+      "image_id": 3,
+      "category_id": 0,
+      "bbox": [
+        377,
+        338,
+        64,
+        158
+      ],
+      "area": 10112,
+      "iscrowd": 0
+    },
+    {
+      "id": 6,
+      "image_id": 3,
+      "category_id": 5,
+      "bbox": [
+        364,
+        424,
+        38,
+        43
+      ],
+      "area": 1634,
+      "iscrowd": 0
+    },
+    {
+      "id": 7,
+      "image_id": 4,
+      "category_id": 1,
+      "bbox": [
+        512,
+        413,
+        256,
+        180
+      ],
+      "area": 46080,
+      "iscrowd": 0
+    },
+    {
+      "id": 8,
+      "image_id": 4,
+      "category_id": 2,
+      "bbox": [
+        588,
+        547,
+        102,
+        28
+      ],
+      "area": 2856,
+      "iscrowd": 0
+    },
+    {
+      "id": 9,
+      "image_id": 5,
+      "category_id": 0,
+      "bbox": [
+        921,
+        342,
+        76,
+        180
+      ],
+      "area": 13680,
+      "iscrowd": 0
+    },
+    {
+      "id": 10,
+      "image_id": 6,
+      "category_id": 0,
+      "bbox": [
+        224,
+        378,
+        64,
+        165
+      ],
+      "area": 10560,
+      "iscrowd": 0
+    },
+    {
+      "id": 11,
+      "image_id": 6,
+      "category_id": 0,
+      "bbox": [
+        300,
+        378,
+        64,
+        165
+      ],
+      "area": 10560,
+      "iscrowd": 0
+    },
+    {
+      "id": 12,
+      "image_id": 7,
+      "category_id": 1,
+      "bbox": [
+        601,
+        417,
+        204,
+        144
+      ],
+      "area": 29376,
+      "iscrowd": 0
+    },
+    {
+      "id": 13,
+      "image_id": 8,
+      "category_id": 0,
+      "bbox": [
+        736,
+        345,
+        64,
+        158
+      ],
+      "area": 10112,
+      "iscrowd": 0
+    },
+    {
+      "id": 14,
+      "image_id": 8,
+      "category_id": 4,
+      "bbox": [
+        736,
+        345,
+        64,
+        158
+      ],
+      "area": 10112,
+      "iscrowd": 0
+    },
+    {
+      "id": 15,
+      "image_id": 9,
+      "category_id": 0,
+      "bbox": [
+        576,
+        349,
+        76,
+        165
+      ],
+      "area": 12540,
+      "iscrowd": 0
+    },
+    {
+      "id": 16,
+      "image_id": 9,
+      "category_id": 1,
+      "bbox": [
+        915,
+        414,
+        217,
+        151
+      ],
+      "area": 32767,
+      "iscrowd": 0
+    },
+    {
+      "id": 17,
+      "image_id": 10,
+      "category_id": 0,
+      "bbox": [
+        454,
+        324,
+        64,
+        144
+      ],
+      "area": 9216,
+      "iscrowd": 0
+    },
+    {
+      "id": 18,
+      "image_id": 10,
+      "category_id": 4,
+      "bbox": [
+        454,
+        324,
+        64,
+        144
+      ],
+      "area": 9216,
+      "iscrowd": 0
+    }
+  ]
+}

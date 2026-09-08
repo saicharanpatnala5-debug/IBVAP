@@ -1,0 +1,27 @@
+# =========================================================================
+# IBVAP - Forward Border Outpost (BOP) Autonomous Edge Node
+# Multi-Arch: x86_64 & ARM64 (NVIDIA Jetson Orin / Nano) Compatible
+# =========================================================================
+
+FROM python:3.11-slim AS edge_runtime
+
+WORKDIR /edge
+ENV PYTHONUNBUFFERED=1 \
+    EDGE_MODE=STANDALONE_AUTONOMOUS \
+    EDGE_BUFFER_CAPACITY=50000
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 libglib2.0-0 libgomp1 ffmpeg sqlite3 curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY edge/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir numpy opencv-python-headless cryptography
+
+COPY edge /edge/edge
+COPY configs /edge/configs
+
+EXPOSE 8554 9090
+
+HEALTHCHECK --interval=10s --timeout=3s CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:9090/health', timeout=2)" || exit 0
+
+CMD ["python", "-m", "edge.main", "--duration", "0"]

@@ -1,0 +1,45 @@
+version: "3.8"
+
+# =========================================================================
+# IBVAP - Offline Air-Gapped Forward Border Outpost (BOP) Stack
+# Zero Internet Dependency | Self-Contained SQLite WAL + Local Ring Buffer
+# =========================================================================
+
+networks:
+  bop_airgap_net:
+    driver: bridge
+
+volumes:
+  bop_edge_buffer:
+  bop_evidence_clips:
+
+services:
+  # 1. Autonomous Edge Analytics Daemon
+  edge_node:
+    build:
+      context: ../..
+      dockerfile: deployment/docker/Dockerfile.edge
+    container_name: bop_edge_node
+    restart: always
+    network_mode: host
+    environment:
+      - EDGE_NODE_ID=BOP-ALPHA-NODE-01
+      - EDGE_SITE=Sector-B-Indo-Nepal
+      - STORAGE_ENCRYPTION_KEY=AirGapTacticalKey2026!
+    volumes:
+      - bop_edge_buffer:/edge/edge/local_storage
+      - bop_evidence_clips:/edge/storage
+      - ../../configs:/edge/configs:ro
+      - /dev:/dev:ro
+    privileged: true
+
+  # 2. Local Tactical Nginx Stream Gateway
+  local_gateway:
+    image: nginx:alpine
+    container_name: bop_local_gateway
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - bop_evidence_clips:/var/www/storage:ro

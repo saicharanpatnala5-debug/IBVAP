@@ -1,0 +1,32 @@
+MIT License with Government Defense Clause (SIH 2026)
+
+Copyright (c) 2026 IBVAP Development Team
+Ministry of Home Affairs / Sashastra Seema Bal (SSB), Police-II Division
+Smart India Hackathon (SIH 2026) | Problem Statement: SIH26187
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+DEFENSE & DATA PROTECTION CLAUSE:
+1. The Software is designed for sovereign border surveillance, perimeter defense,
+   and official public safety applications.
+2. Any use for unlawful surveillance, arbitrary civil tracking, or unauthorized human
+   rights infringement is strictly prohibited under the Digital Personal Data Protection
+   (DPDP) Act 2023 and Section 69 of the Information Technology Act.
+3. Automated decision-making must preserve human-in-the-loop verification by
+   authorized border command personnel.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

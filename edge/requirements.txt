@@ -1,0 +1,8 @@
+# IBVAP - Lightweight Forward Edge Node Dependencies
+# Engineered for NVIDIA Jetson / Raspberry Pi 5 / Industrial PC SBCs
+numpy>=1.24.0
+opencv-python-headless>=4.8.0
+pyyaml>=6.0.1
+psutil>=5.9.0
+requests>=2.31.0
+cryptography>=41.0.0

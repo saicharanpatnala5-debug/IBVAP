@@ -1,0 +1,106 @@
+# ==============================================================================
+# IBVAP: Global System Architecture & Operational Rules Engine
+# Standard: Smart India Hackathon (SIH 2026) | Problem Statement: SIH26187
+# Ministry of Home Affairs / Sashastra Seema Bal (SSB), Police-II Division
+# ==============================================================================
+
+system:
+  platform_name: "IBVAP - Intelligent Border Video Analytics Platform"
+  version: "1.0.0-SIH2026"
+  operational_mode: "PRODUCTION_DEMO"
+  jurisdiction_code: "MHA-SSB-SECTOR-B"
+
+# ------------------------------------------------------------------------------
+# Context-Aware Risk Scoring Engine (PRD Section 12 & TDD Section 10)
+# Dynamic, Weighted, Fully Explainable
+# ------------------------------------------------------------------------------
+risk_engine:
+  weights:
+    restricted_zone_intrusion: 30
+    night_context: 15
+    prolonged_loitering: 15
+    inward_direction_vector: 20
+    unknown_watchlist_vehicle: 20
+    multiple_correlated_signals: 10
+  severity_thresholds:
+    normal_max: 29     # 0-29: Normal event (logged silently)
+    low_max: 59        # 30-59: Low priority event
+    medium_max: 89     # 60-89: Operator notification banner
+    high_max: 119      # 90-119: Prominent alert + acknowledgement required
+    critical_min: 120  # 120+: Immediate audible escalation + auto camera tracking lock
+  hysteresis_dampener_seconds: 5.0 # Prevent flickering between severity states
+
+# ------------------------------------------------------------------------------
+# AI Event Fusion Engine (Major SIH Differentiator)
+# Fuses multiple fragmented detections into ONE single Incident Timeline
+# ------------------------------------------------------------------------------
+event_fusion:
+  enabled: true
+  temporal_correlation_window_seconds: 120.0 # Correlate events within 2 minutes
+  spatial_correlation_radius_meters: 150.0   # Correlate nearby events
+  incident_title_synthesis: true
+  auto_close_inactive_minutes: 30
+
+# ------------------------------------------------------------------------------
+# Predictive Camera Handoff Engine (PRD Section 16)
+# ------------------------------------------------------------------------------
+predictive_handoff:
+  enabled: true
+  min_probability_to_recommend: 0.65
+  pre_arm_feed_seconds_before_eta: 10.0
+  auto_switch_cctv_wall: true
+
+# ------------------------------------------------------------------------------
+# Edge Computing & Offline Resilience (PRD Section 18)
+# ------------------------------------------------------------------------------
+edge:
+  edge_mode_enabled: false
+  local_buffer_capacity_events: 50000
+  offline_heartbeat_sync_interval_seconds: 15.0
+  compression_enabled_for_sync: true
+  priority_upstream_sync:
+    - "CRITICAL_ALERTS"
+    - "ANPR_WATCHLIST_MATCHES"
+    - "FUSED_INCIDENTS"
+    - "ROUTINE_TELEMETRY"
+
+# ------------------------------------------------------------------------------
+# Security, RBAC & DPDP Act 2023 Governance (PRD Section 17)
+# ------------------------------------------------------------------------------
+security:
+  jwt:
+    algorithm: "HS256"
+    access_token_expire_minutes: 1440 # 24 Hours
+  rbac_roles:
+    - "admin"           # System configuration, camera onboarding, user creation
+    - "supervisor"      # Incident escalation, command map, alert resolution
+    - "cctv_operator"   # Live monitoring, alert acknowledgement, PTZ control
+    - "field_response"  # Mobile app evidence viewing, incident response
+    - "auditor"         # DPDP compliance review, immutable audit trail export
+  audit_logging:
+    immutable_hash_chain: true
+    log_actions:
+      - "LOGIN"
+      - "ALERT_ACKNOWLEDGED"
+      - "ALERT_ESCALATED"
+      - "ZONE_MODIFIED"
+      - "CAMERA_REGISTERED"
+      - "EVIDENCE_EXPORTED"
+
+# ------------------------------------------------------------------------------
+# Data Retention & Privacy Controls
+# ------------------------------------------------------------------------------
+retention:
+  raw_video_buffer_days: 7       # Minimize unnecessary storage of raw video
+  evidence_snapshots_days: 90    # Store critical incident snapshots
+  incident_metadata_years: 5     # Operational incident history
+  audit_log_years: 7             # Statutory defense requirement
+
+# ------------------------------------------------------------------------------
+# Real-Time Telemetry & WebSockets
+# ------------------------------------------------------------------------------
+telemetry:
+  websocket_endpoint_alerts: "/ws/alerts"
+  websocket_endpoint_health: "/ws/telemetry"
+  telemetry_broadcast_interval_seconds: 2.0
+  camera_health_check_interval_seconds: 10.0

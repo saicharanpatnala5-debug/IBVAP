@@ -1,0 +1,537 @@
+{
+  "dataset_title": "IBVAP Tactical Multi-Spectral Border Dataset",
+  "standard": "Smart India Hackathon (SIH 2026) | SIH26187",
+  "security_classification": "OFFICIAL - TACTICAL EVALUATION ONLY",
+  "files": [
+    {
+      "path": "data.yaml",
+      "size_bytes": 662,
+      "sha256": "f986eda7144a11902bb46d2758df19c7e3bb595abefdf4a0a9f2387e29e50c8a"
+    },
+    {
+      "path": "dataset_manifest.json",
+      "size_bytes": 16066,
+      "sha256": "c601be2703fbe8c251d020056a522c328e6d7f3ffcd11ed780d0ed98af0fbeba"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 7587,
+      "sha256": "077ee494b66e4e590cb861ff16ad5cc84a86a8704fd8cd9f2496b2a726a27c56"
+    },
+    {
+      "path": "annotations/classes.txt",
+      "size_bytes": 67,
+      "sha256": "86c2b4db8034934fb718ad0611c40824999e8f209cc6afeacea2afc0d8fe2deb"
+    },
+    {
+      "path": "annotations/dataset_stats.json",
+      "size_bytes": 676,
+      "sha256": "64d16fccbc76a1adca9e9baa21552de39231cafc7d624de58b1bcac07797b0d0"
+    },
+    {
+      "path": "annotations/anpr/plates_gt.json",
+      "size_bytes": 1855,
+      "sha256": "95f19eb7e273b79e599079ec07f49ce63a610b9445e72d4634ef48dc6d6d5790"
+    },
+    {
+      "path": "annotations/coco/instances_val.json",
+      "size_bytes": 5685,
+      "sha256": "7299148c072526f07ff8dabbc1569918091a1b29bce092f00a82508961c1e1c0"
+    },
+    {
+      "path": "annotations/mot/gt.txt",
+      "size_bytes": 634,
+      "sha256": "de817f586f7537d67297960309a4f78580d679e27e8ebbf62f90969120b3ceca"
+    },
+    {
+      "path": "annotations/yolo/test_000.txt",
+      "size_bytes": 78,
+      "sha256": "935e723ee472914870352ba00c682067fcb7fda808f82456dd320e9726db9800"
+    },
+    {
+      "path": "annotations/yolo/test_001.txt",
+      "size_bytes": 39,
+      "sha256": "6b715a5df08a4c36cd83f64c4da82c8118a8292be8ca24f17a6f01a9228ede14"
+    },
+    {
+      "path": "annotations/yolo/test_002.txt",
+      "size_bytes": 39,
+      "sha256": "db19f748709a3619cd7c8a7397fb8b980a5e2e7a148d42ac56175d3d55128cb4"
+    },
+    {
+      "path": "annotations/yolo/test_003.txt",
+      "size_bytes": 39,
+      "sha256": "a96e9016ebd2fdd74794e5ecd69ab3f77174ea26bcc9972c15bf82def6ad7935"
+    },
+    {
+      "path": "annotations/yolo/train_000.txt",
+      "size_bytes": 78,
+      "sha256": "13b5b662d9706209b7fee7ad9f0ff5eaddc1d02d0920778d8ab4f9230acb9a42"
+    },
+    {
+      "path": "annotations/yolo/train_001.txt",
+      "size_bytes": 78,
+      "sha256": "6161dc33bd02a36450762cae07ea370497125dd2259e916f3f73be5ecf5057a9"
+    },
+    {
+      "path": "annotations/yolo/train_002.txt",
+      "size_bytes": 78,
+      "sha256": "81fec6ed2542adcedd75aa64adf6e574760bafb961dd1e316fe9312fd5d5afc4"
+    },
+    {
+      "path": "annotations/yolo/train_003.txt",
+      "size_bytes": 78,
+      "sha256": "d55b5831642fb272c4acfbd0055a0bec096198b5d5f8d64764d4c6781a86da33"
+    },
+    {
+      "path": "annotations/yolo/train_004.txt",
+      "size_bytes": 39,
+      "sha256": "8a03fc96a7e9efe92c058131711ebd5328b00f9a96ee8b5dbb5fcf85e2bd5f24"
+    },
+    {
+      "path": "annotations/yolo/train_005.txt",
+      "size_bytes": 78,
+      "sha256": "f54853953317359a7bef697a93ed675aba82f8fd6bad93035090b2f369cf2fc3"
+    },
+    {
+      "path": "annotations/yolo/train_006.txt",
+      "size_bytes": 39,
+      "sha256": "e9d2e9b43e950fd66e3ba39966a2b5cd118d0a3850ed4de6068c7fb50fe35b0f"
+    },
+    {
+      "path": "annotations/yolo/train_007.txt",
+      "size_bytes": 78,
+      "sha256": "4405da57f11073a9b18f907b3b63be6d9aaba3c2564eedf589f69b8b39bb0c52"
+    },
+    {
+      "path": "annotations/yolo/train_008.txt",
+      "size_bytes": 78,
+      "sha256": "1fcab0152acc906e78fa064a4c7b3c330baa364ee350ab5e9af0403beb329876"
+    },
+    {
+      "path": "annotations/yolo/train_009.txt",
+      "size_bytes": 78,
+      "sha256": "f7def7c330ff73c68e87912fa9f5d10c727f7ee532b7009d9c35ac6438151018"
+    },
+    {
+      "path": "annotations/yolo/train_010.txt",
+      "size_bytes": 78,
+      "sha256": "e490c514031b89d402ba6acf12347e5c0cabecc1b77d7d75ff9a2ef8e2e84acc"
+    },
+    {
+      "path": "annotations/yolo/train_011.txt",
+      "size_bytes": 39,
+      "sha256": "6ae53fcd89f2971163d56d9da927c3b3c92003d6cdffae71d6cc2aae742bf50d"
+    },
+    {
+      "path": "annotations/yolo/val_000.txt",
+      "size_bytes": 39,
+      "sha256": "52ca7654f2b597c618af0037209d349a0b6cf09a13de9032d95eb931d9368d17"
+    },
+    {
+      "path": "annotations/yolo/val_001.txt",
+      "size_bytes": 78,
+      "sha256": "60379ec6f83f893d85043b4038b00fd4704949d26ffc34126520703eaa6b5b72"
+    },
+    {
+      "path": "annotations/yolo/val_002.txt",
+      "size_bytes": 39,
+      "sha256": "80f913c4ae7aaabd7aa8ead92dd6ce61952dff61c68f67ee81213bf5d9d5225c"
+    },
+    {
+      "path": "annotations/yolo/val_003.txt",
+      "size_bytes": 39,
+      "sha256": "c7cacb6743a9676809791fad306a9fa2a77c1c8846238ffa422ed0020693608c"
+    },
+    {
+      "path": "processed/test/images/test_000.jpg",
+      "size_bytes": 135146,
+      "sha256": "f6c27214b46fad5c6d9d716844eaa34a516b4450386e14499f674e1ac9257941"
+    },
+    {
+      "path": "processed/test/images/test_001.jpg",
+      "size_bytes": 132687,
+      "sha256": "c3b61416c0d6ebfacb92a06645768ddd18aa22af460a2da21860ce3710da7c6b"
+    },
+    {
+      "path": "processed/test/images/test_002.jpg",
+      "size_bytes": 135128,
+      "sha256": "bcc9cba99126dd57caa1ec766a39a317aeeb6efe6c904dd9e3f59753cfceb8ca"
+    },
+    {
+      "path": "processed/test/images/test_003.jpg",
+      "size_bytes": 135935,
+      "sha256": "e4f94d5b444615c507906c4d8a36759ad5628a1b4aa88f8c4c901b4c65d6d5b2"
+    },
+    {
+      "path": "processed/test/labels/test_000.txt",
+      "size_bytes": 78,
+      "sha256": "935e723ee472914870352ba00c682067fcb7fda808f82456dd320e9726db9800"
+    },
+    {
+      "path": "processed/test/labels/test_001.txt",
+      "size_bytes": 39,
+      "sha256": "6b715a5df08a4c36cd83f64c4da82c8118a8292be8ca24f17a6f01a9228ede14"
+    },
+    {
+      "path": "processed/test/labels/test_002.txt",
+      "size_bytes": 39,
+      "sha256": "db19f748709a3619cd7c8a7397fb8b980a5e2e7a148d42ac56175d3d55128cb4"
+    },
+    {
+      "path": "processed/test/labels/test_003.txt",
+      "size_bytes": 39,
+      "sha256": "a96e9016ebd2fdd74794e5ecd69ab3f77174ea26bcc9972c15bf82def6ad7935"
+    },
+    {
+      "path": "processed/train/images/train_000.jpg",
+      "size_bytes": 32305,
+      "sha256": "0e1188aa0c936fdc982b49460f351ea39060674f55257380c3c7544c35c0fc91"
+    },
+    {
+      "path": "processed/train/images/train_001.jpg",
+      "size_bytes": 34101,
+      "sha256": "0d6e832ff9bbf158b05e682dc01d07ad73a9df75a320c9985ca0c7bbed14c4d0"
+    },
+    {
+      "path": "processed/train/images/train_002.jpg",
+      "size_bytes": 32332,
+      "sha256": "8884c4ddfc63fb91e359b97b55d72be486ee7baed7140e2987baa913b7793575"
+    },
+    {
+      "path": "processed/train/images/train_003.jpg",
+      "size_bytes": 32520,
+      "sha256": "59961c1956a8d51913a4ad904f0e1b405ff106a8aa4f20567687452b7892fe79"
+    },
+    {
+      "path": "processed/train/images/train_004.jpg",
+      "size_bytes": 32426,
+      "sha256": "94bef4629b168a64116ce00d374241243dd78696a4de25fe27243c78ed43fbd8"
+    },
+    {
+      "path": "processed/train/images/train_005.jpg",
+      "size_bytes": 33614,
+      "sha256": "5e5c54923d47c9cc631144f19e4d8823e753474f8bd9a11e8ab9569d95a7d806"
+    },
+    {
+      "path": "processed/train/images/train_006.jpg",
+      "size_bytes": 32227,
+      "sha256": "8c6547098e64705d4b00b75664574a87a13c38524c32f44a44ac3acbac3ce55a"
+    },
+    {
+      "path": "processed/train/images/train_007.jpg",
+      "size_bytes": 32366,
+      "sha256": "527db3f6c7894649237b404fa15a3e115178d37f2b05d3b7a38f02276c2f077a"
+    },
+    {
+      "path": "processed/train/images/train_008.jpg",
+      "size_bytes": 34645,
+      "sha256": "653291acdbe34ef7767f0b00c4c99f3995693d6a950ed55f5f49a3a5177a2e11"
+    },
+    {
+      "path": "processed/train/images/train_009.jpg",
+      "size_bytes": 32353,
+      "sha256": "5669b78427cdd5b98ff507a947f3d0c743e9e615275e520e0b84de48ab06052a"
+    },
+    {
+      "path": "processed/train/images/train_010.jpg",
+      "size_bytes": 135648,
+      "sha256": "cf4f4ccfb56a930711d23be17e6d03882f75b3a35bf5a88963faf9060725cad6"
+    },
+    {
+      "path": "processed/train/images/train_011.jpg",
+      "size_bytes": 136958,
+      "sha256": "beaafdd76d6da0c9c170e55aeff340fec91c5f220dcbf1b535c2f73a13bf9add"
+    },
+    {
+      "path": "processed/train/labels/train_000.txt",
+      "size_bytes": 78,
+      "sha256": "13b5b662d9706209b7fee7ad9f0ff5eaddc1d02d0920778d8ab4f9230acb9a42"
+    },
+    {
+      "path": "processed/train/labels/train_001.txt",
+      "size_bytes": 78,
+      "sha256": "6161dc33bd02a36450762cae07ea370497125dd2259e916f3f73be5ecf5057a9"
+    },
+    {
+      "path": "processed/train/labels/train_002.txt",
+      "size_bytes": 78,
+      "sha256": "81fec6ed2542adcedd75aa64adf6e574760bafb961dd1e316fe9312fd5d5afc4"
+    },
+    {
+      "path": "processed/train/labels/train_003.txt",
+      "size_bytes": 78,
+      "sha256": "d55b5831642fb272c4acfbd0055a0bec096198b5d5f8d64764d4c6781a86da33"
+    },
+    {
+      "path": "processed/train/labels/train_004.txt",
+      "size_bytes": 39,
+      "sha256": "8a03fc96a7e9efe92c058131711ebd5328b00f9a96ee8b5dbb5fcf85e2bd5f24"
+    },
+    {
+      "path": "processed/train/labels/train_005.txt",
+      "size_bytes": 78,
+      "sha256": "f54853953317359a7bef697a93ed675aba82f8fd6bad93035090b2f369cf2fc3"
+    },
+    {
+      "path": "processed/train/labels/train_006.txt",
+      "size_bytes": 39,
+      "sha256": "e9d2e9b43e950fd66e3ba39966a2b5cd118d0a3850ed4de6068c7fb50fe35b0f"
+    },
+    {
+      "path": "processed/train/labels/train_007.txt",
+      "size_bytes": 78,
+      "sha256": "4405da57f11073a9b18f907b3b63be6d9aaba3c2564eedf589f69b8b39bb0c52"
+    },
+    {
+      "path": "processed/train/labels/train_008.txt",
+      "size_bytes": 78,
+      "sha256": "1fcab0152acc906e78fa064a4c7b3c330baa364ee350ab5e9af0403beb329876"
+    },
+    {
+      "path": "processed/train/labels/train_009.txt",
+      "size_bytes": 78,
+      "sha256": "f7def7c330ff73c68e87912fa9f5d10c727f7ee532b7009d9c35ac6438151018"
+    },
+    {
+      "path": "processed/train/labels/train_010.txt",
+      "size_bytes": 78,
+      "sha256": "e490c514031b89d402ba6acf12347e5c0cabecc1b77d7d75ff9a2ef8e2e84acc"
+    },
+    {
+      "path": "processed/train/labels/train_011.txt",
+      "size_bytes": 39,
+      "sha256": "6ae53fcd89f2971163d56d9da927c3b3c92003d6cdffae71d6cc2aae742bf50d"
+    },
+    {
+      "path": "processed/val/images/val_000.jpg",
+      "size_bytes": 136494,
+      "sha256": "9f6cc3ca368b9efc71801f83d3d116a97777c5a75b9c55d8e8a08d72f6665398"
+    },
+    {
+      "path": "processed/val/images/val_001.jpg",
+      "size_bytes": 137729,
+      "sha256": "457504ec7cfa164efeafc256346e1c4bd4786fcde41a385afe5dc75a5654df67"
+    },
+    {
+      "path": "processed/val/images/val_002.jpg",
+      "size_bytes": 132585,
+      "sha256": "492ebd461508199d2b8dea56ca319c81984c1b93e86bb6859fd4374bdecd2a2e"
+    },
+    {
+      "path": "processed/val/images/val_003.jpg",
+      "size_bytes": 135425,
+      "sha256": "5b6c74d9d72ea71f1e807c0bb9f83c034bbe977acea5f4eb6b670572f4804a8c"
+    },
+    {
+      "path": "processed/val/labels/val_000.txt",
+      "size_bytes": 39,
+      "sha256": "52ca7654f2b597c618af0037209d349a0b6cf09a13de9032d95eb931d9368d17"
+    },
+    {
+      "path": "processed/val/labels/val_001.txt",
+      "size_bytes": 78,
+      "sha256": "60379ec6f83f893d85043b4038b00fd4704949d26ffc34126520703eaa6b5b72"
+    },
+    {
+      "path": "processed/val/labels/val_002.txt",
+      "size_bytes": 39,
+      "sha256": "80f913c4ae7aaabd7aa8ead92dd6ce61952dff61c68f67ee81213bf5d9d5225c"
+    },
+    {
+      "path": "processed/val/labels/val_003.txt",
+      "size_bytes": 39,
+      "sha256": "c7cacb6743a9676809791fad306a9fa2a77c1c8846238ffa422ed0020693608c"
+    },
+    {
+      "path": "raw/anpr/bop_anpr_001.jpg",
+      "size_bytes": 27640,
+      "sha256": "a453c71099064f524b23dc9a05cc3c1621aedb2725ce6972ae3eb7605b82c4cb"
+    },
+    {
+      "path": "raw/anpr/bop_anpr_002.jpg",
+      "size_bytes": 28368,
+      "sha256": "d42e3cff7868bac26f78e3219418e49d515984836bf0d96ec98f48e0843f2ae9"
+    },
+    {
+      "path": "raw/anpr/bop_anpr_003.jpg",
+      "size_bytes": 27271,
+      "sha256": "66e2a4b3fa09c061f4c636e732151e5fdfd97cc5d06d94b5573a8da2303afabd"
+    },
+    {
+      "path": "raw/anpr/bop_anpr_004.jpg",
+      "size_bytes": 28351,
+      "sha256": "003e15d480663a7726bf11449fdceb859c966ef688fe84ac3af0caaddcd7994b"
+    },
+    {
+      "path": "raw/anpr/bop_anpr_005.jpg",
+      "size_bytes": 27306,
+      "sha256": "2a4adc6a1750aaed4ec4dae1f928b4a42240e471d922ce8dcc8a1ab906ea2f18"
+    },
+    {
+      "path": "raw/anpr/bop_anpr_006.jpg",
+      "size_bytes": 28227,
+      "sha256": "c127f73770d20b294f062d82b00ed953a61a087e151f2e3d1c3d028f6bedf0f1"
+    },
+    {
+      "path": "raw/faces/bop_face_001.jpg",
+      "size_bytes": 10266,
+      "sha256": "c35320c4c98221955f7f3b71cc8954bdd12f0d09abe26a3bca222127174c68e7"
+    },
+    {
+      "path": "raw/faces/bop_face_002.jpg",
+      "size_bytes": 8803,
+      "sha256": "78e0fcf82487dcc10177ef24cf6443429e6daa843251fa5d39ee06aa791fe1fc"
+    },
+    {
+      "path": "raw/faces/bop_face_003.jpg",
+      "size_bytes": 9954,
+      "sha256": "5f7d32f7de10408f52f58af532731102d2ddd7c1ccb0b649700fc213ae697efd"
+    },
+    {
+      "path": "raw/faces/bop_face_004.jpg",
+      "size_bytes": 8820,
+      "sha256": "fd48c947a7b37c032b0b8594c6dd7bc26cc4e9f6ad6e055804c3a18af74b715b"
+    },
+    {
+      "path": "raw/faces/bop_face_005.jpg",
+      "size_bytes": 10273,
+      "sha256": "c5e8b58dbb864becca977b672af86f86bf0f5d3b27efc17fad41a7e681199c49"
+    },
+    {
+      "path": "raw/faces/bop_face_006.jpg",
+      "size_bytes": 8824,
+      "sha256": "2e5cec5c0ac3940ae75365ab3db7d1c49298a0ea9a9333240187c16739195d90"
+    },
+    {
+      "path": "raw/optical/bop_opt_001.jpg",
+      "size_bytes": 68291,
+      "sha256": "e0a0428eeadb8deb8483d59627e58631b61115553534b985e49c30232097df3f"
+    },
+    {
+      "path": "raw/optical/bop_opt_002.jpg",
+      "size_bytes": 70817,
+      "sha256": "e16bb624e51e1ffb06be72e383cbc5218964aea5c4999ba634a32dc0c14cf307"
+    },
+    {
+      "path": "raw/optical/bop_opt_003.jpg",
+      "size_bytes": 68121,
+      "sha256": "5c12d03c25b78347820e21af8af49b3a0306cbc84420d2ce5b77390c4852d2ae"
+    },
+    {
+      "path": "raw/optical/bop_opt_004.jpg",
+      "size_bytes": 66518,
+      "sha256": "ea4f354b4dbf7fdcb1a8a5a50863ed9da35c3fd3f1d0b59516da22fdc3c3ce23"
+    },
+    {
+      "path": "raw/optical/bop_opt_005.jpg",
+      "size_bytes": 68358,
+      "sha256": "8c93041ebd6e37261c5014cb55ce1c8c7de0d862835a834154e7ecd45a399b7c"
+    },
+    {
+      "path": "raw/optical/bop_opt_006.jpg",
+      "size_bytes": 70438,
+      "sha256": "2f321ed6a6a2bacf1c16ae20246d14a0313773c8a7c177ec652a16f82158fa5b"
+    },
+    {
+      "path": "raw/optical/bop_opt_007.jpg",
+      "size_bytes": 67039,
+      "sha256": "a3c652643140d6aff4e281007788921cc2781d632e0e38c2ddc7505bc83ef27f"
+    },
+    {
+      "path": "raw/optical/bop_opt_008.jpg",
+      "size_bytes": 68207,
+      "sha256": "907615a64346e8cade286296c635f139a8d08332405bf8dcc29c0ee6ad8961fa"
+    },
+    {
+      "path": "raw/optical/bop_opt_009.jpg",
+      "size_bytes": 70869,
+      "sha256": "912b04d8398869bb10ad048ffd76b42ac3f43c5d5d1ccd5c634897db10dc2f7e"
+    },
+    {
+      "path": "raw/optical/bop_opt_010.jpg",
+      "size_bytes": 68338,
+      "sha256": "82782c7771f31c3c308bd2cdf18041baa5370e93d04753c1abcb4c8a1dfa29b4"
+    },
+    {
+      "path": "raw/thermal/bop_thm_001.jpg",
+      "size_bytes": 381567,
+      "sha256": "848448af408fdb9408ea8bef6fabc67f913ab94f8b1fc1fe2a79b6c3b5bc211c"
+    },
+    {
+      "path": "raw/thermal/bop_thm_002.jpg",
+      "size_bytes": 382623,
+      "sha256": "cb7cc5af9b127ef7c83d7aab2a4fedaecfd44161e65e47fe4b25ddc7d19cf559"
+    },
+    {
+      "path": "raw/thermal/bop_thm_003.jpg",
+      "size_bytes": 382993,
+      "sha256": "559b0b6502486c05d4c1ff1a62ace3eecb8c0bb102ebf8df4396069bc301c148"
+    },
+    {
+      "path": "raw/thermal/bop_thm_004.jpg",
+      "size_bytes": 384697,
+      "sha256": "c390d7dca52fa94b58ff598806968f7213f79c9dcc148bc4063b71c0293b02e9"
+    },
+    {
+      "path": "raw/thermal/bop_thm_005.jpg",
+      "size_bytes": 369406,
+      "sha256": "20155b726be4fc2353e109635a6a5fe32ba48172715729990392c7e017d8b42c"
+    },
+    {
+      "path": "raw/thermal/bop_thm_006.jpg",
+      "size_bytes": 380039,
+      "sha256": "6714e598c47d16acc1a5b4baf0dc2a54ad20df3b62da6c7612580f875a4be7b9"
+    },
+    {
+      "path": "raw/thermal/bop_thm_007.jpg",
+      "size_bytes": 378759,
+      "sha256": "f52ccff3b3cb83dcd3312d1ce7a2980bf49ec956b883f4ed87e5b4555eee6c62"
+    },
+    {
+      "path": "raw/thermal/bop_thm_008.jpg",
+      "size_bytes": 369704,
+      "sha256": "cdb267a0a2e4961278ae9980a1e3b1f3516655d6c774123a9890bda458e1491b"
+    },
+    {
+      "path": "raw/thermal/bop_thm_009.jpg",
+      "size_bytes": 378805,
+      "sha256": "98c4ccdd583f76d35094b3443907d01b9a002cbeed46b93bee424471012ac516"
+    },
+    {
+      "path": "raw/thermal/bop_thm_010.jpg",
+      "size_bytes": 382045,
+      "sha256": "778bcbb452b0410738431dd62a598acbfb6adb56301a567cf1a8523436371f7e"
+    },
+    {
+      "path": "scripts/generate_datasets.py",
+      "size_bytes": 475,
+      "sha256": "9b0f3b70b6d65a5498b430de9e6242192c5a5b189148531548f4cae066d38e6b"
+    },
+    {
+      "path": "scripts/verify_dataset.py",
+      "size_bytes": 3777,
+      "sha256": "68cd250bb128216a707f2d12c7febd39196d16d4b9b7d7b9549f08fce58475cb"
+    },
+    {
+      "path": "test-videos/scenario_01_perimeter_breach.mp4",
+      "size_bytes": 676475,
+      "sha256": "35c87c808e0b419b2dc5710d7a6a90a3de00b37b4a6d86886872846a586a106b"
+    },
+    {
+      "path": "test-videos/scenario_02_night_thermal_patrol.mp4",
+      "size_bytes": 14999014,
+      "sha256": "f11bb861068adc1848b1403cc544d005b5977a89bbac8c65de520ca6c52bd896"
+    },
+    {
+      "path": "test-videos/scenario_03_checkpoint_anpr.mp4",
+      "size_bytes": 596117,
+      "sha256": "3cb0899f93eaff570a7b736d8ac55fa3af3027c658297028f49a7c22164b6d7b"
+    },
+    {
+      "path": "test-videos/scenario_04_multicam_handoff.mp4",
+      "size_bytes": 7583236,
+      "sha256": "70689e3151491b1358967bbdd56182724c4a2c4435874b1d9a39370acb740fc7"
+    }
+  ]
+}

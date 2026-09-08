@@ -1,0 +1,34 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "title": "IBVAP Forward Edge Fleet Telemetry",
+  "uid": "ibvap-edge-v1",
+  "schemaVersion": 38,
+  "version": 1,
+  "timezone": "utc",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Edge Offline Queue Buffer Depth (Records)",
+      "type": "gauge",
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": 2,
+      "title": "Inference Latency (YOLOv11 TensorRT ms/frame)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 6,
+        "w": 16,
+        "x": 8,
+        "y": 0
+      }
+    }
+  ]
+}
