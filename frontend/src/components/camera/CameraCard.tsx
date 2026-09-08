@@ -1,6 +1,8 @@
 import React from 'react';
 import { Camera, CameraStatus } from '../../types';
-import { Video, Maximize2 } from 'lucide-react';
+import { Video, Maximize2, User, Car, Sparkles, Crosshair } from 'lucide-react';
+import { getCameraVideoUrl } from '../../utils/videoFeeds';
+import { getDetectionsForTime, computeTelemetry } from '../../utils/detectionEngine';
 
 interface CameraCardProps {
   camera: Camera;
@@ -15,6 +17,8 @@ export const CameraCard: React.FC<CameraCardProps> = ({
   onSelect,
   onExpand,
 }) => {
+  const telemetry = computeTelemetry(getDetectionsForTime(camera.camera_id, 3.0, 15));
+
   const getStatusBadge = (status: CameraStatus) => {
     switch (status) {
       case 'ONLINE':
@@ -55,30 +59,48 @@ export const CameraCard: React.FC<CameraCardProps> = ({
           <span className="font-mono text-xs font-bold text-white">{camera.camera_id}</span>
           <span className="text-[10px] font-mono text-slate-400">{camera.sensor_type || 'OPTICAL_4K'}</span>
         </div>
-        <span
-          className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border uppercase ${getStatusBadge(
-            camera.status
-          )}`}
-        >
-          {camera.status}
-        </span>
+        <div className="flex items-center space-x-1.5">
+          {/* Live 4-Class Target Indicators */}
+          <div className="flex items-center space-x-1.5 bg-black/60 px-1.5 py-0.5 rounded border border-slate-800 text-[9px] font-mono">
+            <span className={telemetry.personCount > 0 ? "text-rose-400 font-bold" : "text-slate-600"} title="Person Targets">P:{telemetry.personCount}</span>
+            <span className={telemetry.vehicleCount > 0 ? "text-cyan-400 font-bold" : "text-slate-600"} title="Vehicle Targets">V:{telemetry.vehicleCount}</span>
+            <span className={telemetry.objectCount > 0 ? "text-purple-400 font-bold" : "text-slate-600"} title="Objects & Weapons">O:{telemetry.objectCount}</span>
+            <span className={telemetry.animalCount > 0 ? "text-amber-400 font-bold" : "text-slate-600"} title="Animals (Filtered)">A:{telemetry.animalCount}</span>
+          </div>
+          <span
+            className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border uppercase ${getStatusBadge(
+              camera.status
+            )}`}
+          >
+            {camera.status}
+          </span>
+        </div>
       </div>
 
-      <div className="relative aspect-video rounded-xl bg-black/60 border border-slate-800 overflow-hidden flex items-center justify-center reticle-grid">
-        <div className="absolute inset-0 flex flex-col items-center justify-center opacity-40">
-          <Video className="w-8 h-8 text-emerald-400 mb-1 animate-pulse" />
-          <span className="text-[10px] font-mono text-slate-400">{camera.name}</span>
+      <div className="relative aspect-video rounded-xl bg-black border border-slate-800 overflow-hidden flex items-center justify-center group">
+        <video
+          src={getCameraVideoUrl(camera.camera_id, camera.stream_url)}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+
+        <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-emerald-500/60 pointer-events-none" />
+        <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-emerald-500/60 pointer-events-none" />
+        <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-emerald-500/60 pointer-events-none" />
+        <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-emerald-500/60 pointer-events-none" />
+
+        <div className="absolute top-2 left-2 flex items-center space-x-1 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[9px] font-mono text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+          <span>LIVE</span>
         </div>
 
-        <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-emerald-500/60" />
-        <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-emerald-500/60" />
-        <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-emerald-500/60" />
-        <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-emerald-500/60" />
-
-        <div className="absolute bottom-2 left-2 text-[9px] font-mono text-emerald-400 bg-black/70 px-1 rounded">
+        <div className="absolute bottom-2 left-2 text-[9px] font-mono text-emerald-400 bg-black/70 px-1 rounded backdrop-blur-sm">
           {camera.fps.toFixed(1)} FPS
         </div>
-        <div className="absolute top-2 right-2 text-[9px] font-mono text-slate-400 bg-black/70 px-1 rounded">
+        <div className="absolute top-2 right-2 text-[9px] font-mono text-slate-300 bg-black/70 px-1 rounded backdrop-blur-sm">
           {camera.resolution}
         </div>
       </div>

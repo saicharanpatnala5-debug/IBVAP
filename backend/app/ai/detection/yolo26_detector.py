@@ -204,11 +204,11 @@ class YOLO26Detector(BaseDetector):
     def _simulate_yolo26_detections(self, frame: np.ndarray, is_thermal: bool) -> List[BoundingBox]:
         dets = []
         if is_thermal:
-            # Thermal camera: Detects heat signature at zero-tolerance wire
+            # 1. PERSON: Thermal heat signature at zero-tolerance wire
             dets.append(
                 BoundingBox(
                     x1=0.48, y1=0.32, x2=0.58, y2=0.68,
-                    confidence=0.962,
+                    confidence=0.972,
                     class_id=0,
                     class_name="person",
                     attributes={
@@ -220,11 +220,11 @@ class YOLO26Detector(BaseDetector):
                     }
                 )
             )
-            # Military payload detected
+            # 2. OBJECT: Military payload / dense cargo detected
             dets.append(
                 BoundingBox(
                     x1=0.52, y1=0.38, x2=0.57, y2=0.52,
-                    confidence=0.884,
+                    confidence=0.914,
                     class_id=3,
                     class_name="military_rucksack",
                     attributes={
@@ -234,33 +234,96 @@ class YOLO26Detector(BaseDetector):
                     }
                 )
             )
-        else:
-            # Optical camera: Detects Scorpio SUV at checkpoint approach
+            # 3. ANIMAL: Thermal Wildlife (Wild Dog / Canine) with SSB False Alarm Filtering
             dets.append(
                 BoundingBox(
-                    x1=0.35, y1=0.45, x2=0.65, y2=0.85,
-                    confidence=0.948,
+                    x1=0.18, y1=0.64, x2=0.32, y2=0.82,
+                    confidence=0.938,
+                    class_id=5,
+                    class_name="wildlife",
+                    attributes={
+                        "model": "YOLO26s",
+                        "species": "Canine (Wild Dog)",
+                        "is_filtered_false_alarm": True,
+                        "thermal_delta_c": "+4.2°C surface heat",
+                        "threat_level": "FILTERED_NON_THREAT"
+                    }
+                )
+            )
+            # 4. VEHICLE: Patrol vehicle with heat exhaust
+            dets.append(
+                BoundingBox(
+                    x1=0.68, y1=0.20, x2=0.90, y2=0.44,
+                    confidence=0.958,
+                    class_id=1,
+                    class_name="vehicle",
+                    attributes={
+                        "model": "YOLO26s",
+                        "vehicle_type": "PATROL_GYPSY",
+                        "speed_kmh": 28.0,
+                        "threat_level": "LOW"
+                    }
+                )
+            )
+        else:
+            # 1. VEHICLE: Scorpio SUV at checkpoint approach
+            dets.append(
+                BoundingBox(
+                    x1=0.32, y1=0.34, x2=0.66, y2=0.78,
+                    confidence=0.984,
                     class_id=1,
                     class_name="vehicle",
                     attributes={
                         "model": "YOLO26s",
                         "vehicle_type": "SUV_4x4",
-                        "speed_kmh": 42.0,
+                        "speed_kmh": 38.2,
+                        "anpr_plate": "DL 14 CE 5987",
+                        "anpr_status": "VERIFIED_HSRP",
                         "threat_level": "MODERATE"
                     }
                 )
             )
-            # Distant pedestrian near outer gate
+            # 2. PERSON: Sentry patrol guard near barrier
             dets.append(
                 BoundingBox(
-                    x1=0.70, y1=0.42, x2=0.76, y2=0.72,
-                    confidence=0.915,
+                    x1=0.18, y1=0.36, x2=0.30, y2=0.80,
+                    confidence=0.976,
                     class_id=0,
                     class_name="person",
                     attributes={
                         "model": "YOLO26s",
                         "posture": "standing_patrol",
-                        "threat_level": "ELEVATED"
+                        "threat_level": "LOW"
+                    }
+                )
+            )
+            # 3. OBJECT: Long-arm weapon / inspection apparatus
+            dets.append(
+                BoundingBox(
+                    x1=0.26, y1=0.48, x2=0.34, y2=0.62,
+                    confidence=0.932,
+                    class_id=4,
+                    class_name="weapon",
+                    attributes={
+                        "model": "YOLO26s",
+                        "weapon_type": "authorized_service_rifle",
+                        "threat_level": "MODERATE"
+                    }
+                )
+            )
+            # 4. ANIMAL: Stray border cattle (Bos Taurus) - Filtered False Alarm
+            dets.append(
+                BoundingBox(
+                    x1=0.74, y1=0.62, x2=0.90, y2=0.82,
+                    confidence=0.946,
+                    class_id=5,
+                    class_name="wildlife",
+                    attributes={
+                        "model": "YOLO26s",
+                        "species": "Bovine (Bos Taurus) - Stray Cattle",
+                        "is_filtered_false_alarm": True,
+                        "behavior": "Grazing near outer buffer - DISPATCH SUPPRESSED",
+                        "threat_level": "FILTERED_NON_THREAT"
                     }
                 )
             )

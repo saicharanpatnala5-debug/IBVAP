@@ -8,11 +8,14 @@ import { ThreatRadarChart } from '../components/charts/ThreatRadarChart';
 import { HourlyBreachChart } from '../components/charts/HourlyBreachChart';
 import { RiskDistributionChart } from '../components/charts/RiskDistributionChart';
 import { TacticalMap } from '../components/maps/TacticalMap';
+import { TacticalIngestionHub } from '../components/video/TacticalIngestionHub';
+import { CCTVUploadModal } from '../components/video/CCTVUploadModal';
+import { LiveCCTVConnectModal } from '../components/video/LiveCCTVConnectModal';
 import { useCameras } from '../hooks/useCameras';
 import { useAlerts } from '../hooks/useAlerts';
 import { Alert, Camera } from '../types';
 import { SEOHead } from '../components/common/SEOHead';
-import { Activity, Radio, Video, ShieldAlert, Cpu } from 'lucide-react';
+import { Activity, Radio, Video, ShieldAlert, Cpu, UploadCloud, Plus } from 'lucide-react';
 
 interface DashboardProps {
   onNavigate: (page: string) => void;
@@ -22,6 +25,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const { cameras } = useCameras();
   const { alerts, setAlerts } = useAlerts();
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState<boolean>(false);
+  const [hubVideo, setHubVideo] = useState<{ url?: string; title?: string }>({});
 
   const handleAcknowledge = (id: string) => {
     setAlerts((prev) =>
@@ -79,6 +85,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       {/* Main Interactive Tactical Map */}
       <TacticalMap />
 
+      {/* Tactical Video Ingestion & Live Streams Hub */}
+      <TacticalIngestionHub
+        onOpenUploadModal={(url, title) => {
+          setHubVideo({ url, title });
+          setIsUploadModalOpen(true);
+        }}
+        onOpenConnectModal={() => setIsConnectModalOpen(true)}
+        onSelectCamera={(id) => onNavigate('live')}
+      />
+
       {/* Bento Grid Analytics */}
       <BentoGrid />
 
@@ -89,6 +105,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             cameras={cameras.slice(0, 4)}
             onExpandCamera={() => onNavigate('live')}
             onSelectCamera={() => onNavigate('live')}
+            onConnectNewCamera={() => setIsConnectModalOpen(true)}
           />
         </div>
         <div>
@@ -111,6 +128,26 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         alert={selectedAlert}
         onClose={() => setSelectedAlert(null)}
         onAcknowledge={handleAcknowledge}
+      />
+
+      {/* Forensic CCTV Footage Upload Modal */}
+      <CCTVUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        initialVideoUrl={hubVideo.url}
+        initialVideoTitle={hubVideo.title}
+        onFuseToIncident={(inc) => {
+          onNavigate('incidents');
+        }}
+      />
+
+      {/* Live CCTV Stream Connect Modal */}
+      <LiveCCTVConnectModal
+        isOpen={isConnectModalOpen}
+        onClose={() => setIsConnectModalOpen(false)}
+        onConnectCamera={(newCam) => {
+          onNavigate('live');
+        }}
       />
     </div>
   );

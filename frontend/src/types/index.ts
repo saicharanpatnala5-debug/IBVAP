@@ -141,3 +141,42 @@ export interface PricingTier {
   features: string[];
   ctaLabel: string;
 }
+
+export type DetectionClass = 'person' | 'vehicle' | 'object' | 'animal';
+
+export type DetectionThreatLevel = 'CRITICAL' | 'HIGH' | 'MODERATE' | 'LOW' | 'FILTERED_NON_THREAT';
+
+export interface TacticalDetection {
+  id: string;
+  track_id: string;
+  class_name: DetectionClass;
+  label: string;
+  sub_label?: string;
+  confidence: number;
+  // Normalized bounding box [x, y, width, height] (0.0 to 1.0)
+  bbox: [number, number, number, number];
+  threat_level: DetectionThreatLevel;
+  color: string;
+  details?: {
+    posture?: string;
+    speed_kmh?: number;
+    anpr_plate?: string;
+    anpr_status?: string;
+    payload_type?: string;
+    species?: string;
+    is_filtered_false_alarm?: boolean;
+    distance_m?: number;
+    behavior?: string;
+  };
+}
+
+export interface DetectionTelemetry {
+  personCount: number;
+  vehicleCount: number;
+  objectCount: number;
+  animalCount: number;
+  totalActive: number;
+  filteredFalseAlarms: number;
+  highestThreat: DetectionThreatLevel;
+}
+

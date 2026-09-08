@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Bell, Clock, Radio, User, Activity } from 'lucide-react';
+import { Shield, Bell, Clock, Radio, User, Activity, Video, UploadCloud, Plus } from 'lucide-react';
 import { useTacticalStore } from '../../store/useTacticalStore';
 import { TacticalAuth } from '../../services/auth';
+import { CCTVUploadModal } from '../video/CCTVUploadModal';
+import { LiveCCTVConnectModal } from '../video/LiveCCTVConnectModal';
 
 interface NavbarProps {
   onNavigate?: (page: string) => void;
@@ -11,6 +13,8 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
   const { threatLevel, audioAlertsEnabled, toggleAudioAlerts } = useTacticalStore();
   const [currentTime, setCurrentTime] = useState<string>('');
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState<boolean>(false);
   const session = TacticalAuth.getSession() || TacticalAuth.getDefaultPreset('admin');
 
   useEffect(() => {
@@ -57,7 +61,26 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-2.5">
+        {/* Quick Tactical Action Buttons */}
+        <button
+          onClick={() => setIsConnectModalOpen(true)}
+          className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-mono text-xs font-semibold transition-all shadow-sm"
+          title="Connect Live RTSP / IP Camera"
+        >
+          <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+          <span>+ Connect Live</span>
+        </button>
+
+        <button
+          onClick={() => setIsUploadModalOpen(true)}
+          className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white font-mono text-xs transition-colors"
+          title="Upload Surveillance Video for AI Detection"
+        >
+          <UploadCloud className="w-3.5 h-3.5 text-cyan-400" />
+          <span>Upload CCTV</span>
+        </button>
+
         <button
           onClick={toggleAudioAlerts}
           title={audioAlertsEnabled ? 'Audio Alarms Active' : 'Audio Alarms Muted'}
@@ -90,6 +113,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
           </div>
         </div>
       </div>
+
+      {/* Global Ingestion Modals */}
+      <CCTVUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onFuseToIncident={() => onNavigate && onNavigate('incidents')}
+      />
+
+      <LiveCCTVConnectModal
+        isOpen={isConnectModalOpen}
+        onClose={() => setIsConnectModalOpen(false)}
+        onConnectCamera={() => onNavigate && onNavigate('live')}
+      />
     </header>
   );
 };
