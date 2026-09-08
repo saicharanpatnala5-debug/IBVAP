@@ -125,3 +125,4 @@ ehthumbs_vista.db
 scratch/
 
 backend/app/static/videos/*.mp4
+test
