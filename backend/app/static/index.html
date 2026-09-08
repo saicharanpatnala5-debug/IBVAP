@@ -2748,9 +2748,19 @@
       }, 4000);
     }
 
-    // Comprehensive Tab Switching Mechanism
+    // Comprehensive Tab Switching Mechanism with Deep Linking
+    function getInitialTab() {
+      if (window.location.hash) {
+        const h = window.location.hash.replace('#', '').trim();
+        if (h && document.getElementById('tab-' + h)) return h;
+      }
+      const path = window.location.pathname.replace(/^\/+|\/+$/g, '').trim();
+      if (path && document.getElementById('tab-' + path)) return path;
+      return 'dashboard';
+    }
+
     function switchTab(tabId) {
-      playTacticalSound('click');
+      if (typeof playTacticalSound === 'function') playTacticalSound('click');
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
 
       document.querySelectorAll('.nav-btn').forEach(el => {
@@ -2769,8 +2779,21 @@
         activeBtn.classList.add('nav-btn-active');
       }
 
-      lucide.createIcons();
+      if (window.location.hash !== '#' + tabId) {
+        try {
+          history.replaceState(null, '', '#' + tabId);
+        } catch (e) {}
+      }
+
+      if (window.lucide) lucide.createIcons();
     }
+
+    window.addEventListener('hashchange', () => {
+      const h = window.location.hash ? window.location.hash.replace('#', '').trim() : '';
+      if (h && document.getElementById('tab-' + h)) {
+        switchTab(h);
+      }
+    });
 
     // Posture Switcher
     const defconLevels = [
@@ -2780,9 +2803,17 @@
       { name: 'MEDIUM — ROUND THE CLOCK', class: 'bg-amber-500/10 border-amber-500/40 text-amber-400 hover:bg-amber-500/20' }
     ];
     let defconIndex = 0;
-
-    `;
-      text.innerText = current.name;
+    function cycleDefcon() {
+      defconIndex = (defconIndex + 1) % defconLevels.length;
+      const current = defconLevels[defconIndex];
+      const badge = document.getElementById('defcon-badge');
+      const text = document.getElementById('defcon-text');
+      if (badge) {
+        badge.className = `flex items-center space-x-2 px-3 py-1.5 rounded-lg border transition-all cursor-pointer shadow-lg ${current.class}`;
+      }
+      if (text) {
+        text.innerText = current.name;
+      }
       playTacticalSound('defcon');
       showToast('Defense Posture Changed', `Sector status transitioned to ${current.name}`, 'warning');
     }
@@ -2831,13 +2862,16 @@
           activeSession = JSON.parse(stored);
           applySessionToUI(activeSession);
           hideLoginModal();
-      switchTab('dashboard');
+          switchTab(getInitialTab());
           return;
         }
       } catch (e) {
         console.warn('Auth check error:', e);
       }
-      showLoginModal();
+      // Initialize default session for immediate MVP readiness (mirroring App.tsx preset)
+      executeLogin('Sai Charan', 'CMD-001-SC', 'Command Lead');
+      hideLoginModal();
+      switchTab(getInitialTab());
     }
 
     function showLoginModal() {
@@ -3108,7 +3142,14 @@
     }
 
     // QRT Scramble Action
-    ! All posts alerted.`, 'critical');
+    function triggerQRT(zone) {
+      playTacticalSound('alert');
+      showToast('EMERGENCY QRT SCRAMBLED', `Quick Response Patrol deployed to ${zone || 'Sector B'}! All posts alerted.`, 'critical');
+    }
+
+    function lockdownSector() {
+      playTacticalSound('defcon');
+      showToast('SECTOR LOCKDOWN ENGAGED', 'Physical anti-ram barriers deployed at Checkpoints 1-4.', 'warning');
     }
 
     

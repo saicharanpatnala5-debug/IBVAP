@@ -3,6 +3,7 @@ import { Camera, CameraStatus } from '../../types';
 import { Video, Maximize2, User, Car, Sparkles, Crosshair } from 'lucide-react';
 import { getCameraVideoUrl } from '../../utils/videoFeeds';
 import { getDetectionsForTime, computeTelemetry } from '../../utils/detectionEngine';
+import { formatSensorType } from '../../utils/formatters';
 
 interface CameraCardProps {
   camera: Camera;
@@ -43,6 +44,8 @@ export const CameraCard: React.FC<CameraCardProps> = ({
     }
   };
 
+  const formattedStatus = camera.status.charAt(0) + camera.status.slice(1).toLowerCase();
+
   return (
     <div
       onClick={onSelect}
@@ -57,7 +60,7 @@ export const CameraCard: React.FC<CameraCardProps> = ({
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
           <span className="font-mono text-xs font-bold text-white">{camera.camera_id}</span>
-          <span className="text-[10px] font-mono text-slate-400">{camera.sensor_type || 'OPTICAL_4K'}</span>
+          <span className="text-[10px] font-mono text-slate-400">{formatSensorType(camera.sensor_type)}</span>
         </div>
         <div className="flex items-center space-x-1.5">
           {/* Live 4-Class Target Indicators */}
@@ -68,11 +71,11 @@ export const CameraCard: React.FC<CameraCardProps> = ({
             <span className={telemetry.animalCount > 0 ? "text-amber-400 font-bold" : "text-slate-600"} title="Animals (Filtered)">A:{telemetry.animalCount}</span>
           </div>
           <span
-            className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded border uppercase ${getStatusBadge(
+            className={`text-[9px] font-mono font-semibold px-2 py-0.5 rounded border ${getStatusBadge(
               camera.status
             )}`}
           >
-            {camera.status}
+            {formattedStatus}
           </span>
         </div>
       </div>

@@ -10,6 +10,7 @@ import { SEOHead } from '../components/common/SEOHead';
 import { Camera } from '../types';
 import { Radio, UploadCloud, Plus } from 'lucide-react';
 import { getDetectionsForTime } from '../utils/detectionEngine';
+import { formatSensorType } from '../utils/formatters';
 
 export const LiveMonitoring: React.FC = () => {
   const { cameras } = useCameras();
@@ -74,6 +75,7 @@ export const LiveMonitoring: React.FC = () => {
             <LiveStreamPlayer 
               camera={selectedCam} 
               customVideoUrl={customVideoUrl || undefined}
+              customVideoTitle={customVideoTitle || undefined}
             />
           )}
 
@@ -108,7 +110,12 @@ export const LiveMonitoring: React.FC = () => {
 
             {/* Target Breakdown */}
             {(() => {
-              const activeDets = getDetectionsForTime(customVideoUrl || activeCamId, 2.0, 15);
+              const activeDets = getDetectionsForTime(
+                customVideoTitle || customVideoUrl || activeCamId,
+                2.0,
+                15,
+                customVideoTitle || customVideoUrl || selectedCam?.name
+              );
               return (
                 <div className="space-y-2">
                   {activeDets.map((d) => (
@@ -152,19 +159,19 @@ export const LiveMonitoring: React.FC = () => {
             <div className="rounded-2xl p-4 liquid-glass border border-slate-800 text-xs font-mono space-y-2">
               <span className="text-[10px] font-bold text-slate-400 uppercase">Stream Diagnostics</span>
               <div className="flex justify-between text-slate-300">
-                <span>RTSP ENDPOINT:</span>
+                <span className="text-slate-500">RTSP Endpoint:</span>
                 <span className="text-cyan-400 truncate max-w-[140px]">{selectedCam.stream_url}</span>
               </div>
               <div className="flex justify-between text-slate-300">
-                <span>RESOLUTION:</span>
+                <span className="text-slate-500">Resolution:</span>
                 <span className="text-white">{selectedCam.resolution}</span>
               </div>
               <div className="flex justify-between text-slate-300">
-                <span>SENSOR:</span>
-                <span className="text-emerald-400">{selectedCam.sensor_type || 'OPTICAL_4K'}</span>
+                <span className="text-slate-500">Sensor:</span>
+                <span className="text-emerald-400">{formatSensorType(selectedCam.sensor_type)}</span>
               </div>
               <div className="flex justify-between text-slate-300">
-                <span>LAT/LON:</span>
+                <span className="text-slate-500">Coordinates:</span>
                 <span className="text-slate-300">{selectedCam.latitude}, {selectedCam.longitude}</span>
               </div>
             </div>

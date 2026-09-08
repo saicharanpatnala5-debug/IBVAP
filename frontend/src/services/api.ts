@@ -154,7 +154,25 @@ export async function fetchCameras(): Promise<Camera[]> {
 export async function fetchAlerts(): Promise<Alert[]> {
   try {
     const res = await fetch(`${API_BASE}/alerts`);
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data: any[] = await res.json();
+      return data.map((a) => {
+        const fallbackScore =
+          a.severity === 'CRITICAL' ? 95 :
+          a.severity === 'HIGH' ? 75 :
+          a.severity === 'MEDIUM' ? 55 : 25;
+
+        return {
+          ...a,
+          risk_score: (typeof a.risk_score === 'number' && a.risk_score > 0)
+            ? a.risk_score
+            : (typeof a.score === 'number' && a.score > 0 ? a.score : fallbackScore),
+          message: a.message || a.description || a.title || 'Tactical security event detected',
+          rule_triggered: a.rule_triggered || a.title || 'ZONE_INTRUSION',
+          status: a.status || (a.is_acknowledged ? 'ACKNOWLEDGED' : 'ACTIVE'),
+        };
+      });
+    }
   } catch (e) {
     console.warn('Backend offline, using tactical mock alerts', e);
   }

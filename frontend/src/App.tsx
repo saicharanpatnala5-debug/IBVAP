@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/common/Navbar';
 import { Sidebar } from './components/common/Sidebar';
 import { TacticalAuth } from './services/auth';
+import { OfflineBufferBanner } from './components/common/OfflineBufferBanner';
+import { HighContrastRiskBanner } from './components/common/HighContrastRiskBanner';
 
 // 16 Tactical Pages
 import { Login } from './pages/Login';
@@ -15,10 +17,6 @@ import { VideoSearch } from './pages/VideoSearch';
 import { Analytics } from './pages/Analytics';
 import { MapView } from './pages/MapView';
 import { Settings } from './pages/Settings';
-import { About } from './pages/About';
-import { Contact } from './pages/Contact';
-import { Waitlist } from './pages/Waitlist';
-import { ThankYou } from './pages/ThankYou';
 import { NotFound } from './pages/NotFound';
 
 export const App: React.FC = () => {
@@ -82,23 +80,17 @@ export const App: React.FC = () => {
         return <MapView />;
       case 'settings':
         return <Settings />;
-      case 'about':
-        return <About />;
-      case 'contact':
-        return <Contact />;
-      case 'waitlist':
-        return <Waitlist onSubmitted={() => setCurrentPage('thankyou')} />;
-      case 'thankyou':
-        return <ThankYou onReturnHome={() => setCurrentPage('dashboard')} />;
       case 'login':
         return <Login onLoginSuccess={handleLoginSuccess} />;
       default:
-        return <NotFound onReturnHome={() => setCurrentPage('dashboard')} />;
+        return <Dashboard onNavigate={handleNavigate} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-obsidian text-slate-100 flex flex-col font-sans selection:bg-brand-emerald/30 selection:text-brand-emerald">
+      <HighContrastRiskBanner />
+      <OfflineBufferBanner />
       <Navbar onNavigate={handleNavigate} activePage={currentPage} />
       <div className="flex flex-1 relative overflow-hidden">
         <Sidebar currentPage={currentPage} onNavigate={handleNavigate} />

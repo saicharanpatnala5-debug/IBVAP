@@ -57,6 +57,7 @@ export interface Alert {
   message: string;
   risk_score: number;
   status: 'ACTIVE' | 'ACKNOWLEDGED' | 'DISMISSED';
+  is_acknowledged?: boolean;
   acknowledged_by?: string;
   acknowledged_at?: string;
   created_at: string;
@@ -158,21 +159,28 @@ export interface TacticalDetection {
   threat_level: DetectionThreatLevel;
   color: string;
   details?: {
+    vehicle_type?: string;
     posture?: string;
     speed_kmh?: number;
     anpr_plate?: string;
+    anpr_norm?: string;
     anpr_status?: string;
+    anpr_confidence?: number;
+    owner_lookup_url?: string;
     payload_type?: string;
     species?: string;
     is_filtered_false_alarm?: boolean;
     distance_m?: number;
     behavior?: string;
+    thermal_delta_c?: string;
   };
 }
+
 
 export interface DetectionTelemetry {
   personCount: number;
   vehicleCount: number;
+  heavyVehicleCount?: number;
   objectCount: number;
   animalCount: number;
   totalActive: number;

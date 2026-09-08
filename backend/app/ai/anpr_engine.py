@@ -47,12 +47,18 @@ class ANPRPipeline:
         det_res = self.detector.detect_plate(vehicle_crop)
         ocr_res = self.ocr.recognize(det_res.plate_crop)
 
+        conf = ocr_res["confidence"]
+        req_human = conf < 0.70
+
         return {
             "plate_text": ocr_res["plate_text"],
             "state_code": ocr_res["state_code"],
             "plate_bbox": det_res.bbox,
             "detector_confidence": round(det_res.confidence, 4),
-            "ocr_confidence": ocr_res["confidence"],
+            "ocr_confidence": conf,
+            "verification_status": "Requires Human Verification" if req_human else "OCR Verified",
+            "requires_human_verification": req_human,
+            "is_verified": not req_human,
             "char_confidences": ocr_res["char_confidences"],
             "is_valid_registration_syntax": ocr_res["is_valid_syntax"],
             "is_high_security_plate": ocr_res["is_high_security_plate"],

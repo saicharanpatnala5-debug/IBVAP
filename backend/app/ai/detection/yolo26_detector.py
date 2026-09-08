@@ -110,7 +110,9 @@ class YOLO26Detector(BaseDetector):
 
         # High-performance calibrated deterministic neural simulation
         boxes = self._simulate_yolo26_detections(frame, is_thermal)
-        filtered = [b for b in boxes if b.confidence >= self.confidence_threshold]
+        # PRD FR-01: Adaptive confidence threshold (0.35 night/thermal LWIR, 0.55 daytime optical)
+        active_thresh = 0.35 if is_thermal else max(0.50, self.confidence_threshold)
+        filtered = [b for b in boxes if b.confidence >= active_thresh]
         return self.apply_nms(filtered)
 
     def detect_multi_spectral(

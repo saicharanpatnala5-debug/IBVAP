@@ -4,9 +4,14 @@ IBVAP - High-Level Multi-Object Tracker
 from typing import List, Dict, Any
 import numpy as np
 import time
-from ai.detection.detector import BoundingBox
-from ai.tracking.bytetrack import ByteTrack, STrack
-from ai.tracking.trajectory import trajectory_engine
+try:
+    from ai.detection.detector import BoundingBox
+    from ai.tracking.bytetrack import ByteTrack, STrack
+    from ai.tracking.trajectory import trajectory_engine
+except ImportError:
+    from app.ai.detection.detector import BoundingBox
+    from app.ai.tracking.bytetrack import ByteTrack, STrack
+    from app.ai.tracking.trajectory import trajectory_engine
 
 class MultiObjectTracker:
     def __init__(self):

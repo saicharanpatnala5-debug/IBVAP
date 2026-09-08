@@ -6,9 +6,11 @@ import uvicorn
 import os
 import sys
 
-# Ensure backend directory is in python path
-backend_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backend")
+# Ensure backend directory and root directory are in python path
+root_path = os.path.dirname(os.path.abspath(__file__))
+backend_path = os.path.join(root_path, "backend")
 os.chdir(backend_path)
+sys.path.insert(0, root_path)
 sys.path.insert(0, backend_path)
 
 import argparse

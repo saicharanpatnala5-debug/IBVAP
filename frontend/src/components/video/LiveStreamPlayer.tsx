@@ -12,6 +12,7 @@ import {
 interface LiveStreamPlayerProps {
   camera: Camera;
   customVideoUrl?: string;
+  customVideoTitle?: string;
   onSnapshot?: () => void;
   onSelectTarget?: (targetId: string | null) => void;
 }
@@ -19,6 +20,7 @@ interface LiveStreamPlayerProps {
 export const LiveStreamPlayer: React.FC<LiveStreamPlayerProps> = ({ 
   camera, 
   customVideoUrl,
+  customVideoTitle,
   onSnapshot,
   onSelectTarget 
 }) => {
@@ -47,11 +49,12 @@ export const LiveStreamPlayer: React.FC<LiveStreamPlayerProps> = ({
 
   const videoSource = customVideoUrl || getCameraVideoUrl(camera.camera_id, camera.stream_url);
 
-  // Compute synchronized detections for current playback timestamp
+  // Compute synchronized detections for current playback timestamp with title hint
   const detections = getDetectionsForTime(
-    customVideoUrl || camera.camera_id,
+    customVideoTitle || customVideoUrl || camera.camera_id,
     currentTime,
-    duration
+    duration,
+    customVideoTitle || customVideoUrl || camera.name
   );
   const telemetry = computeTelemetry(detections);
 

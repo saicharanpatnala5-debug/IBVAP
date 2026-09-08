@@ -76,8 +76,8 @@ class AlertService:
         await db.refresh(alert)
         return alert
 
-    async def get_active_alerts(self, db: AsyncSession, limit: int = 50) -> List[Alert]:
-        query = select(Alert).order_by(Alert.is_acknowledged.asc(), Alert.created_at.desc()).limit(limit)
+    async def get_active_alerts(self, db: AsyncSession, limit: int = 50, offset: int = 0) -> List[Alert]:
+        query = select(Alert).order_by(Alert.is_acknowledged.asc(), Alert.created_at.desc()).offset(offset).limit(limit)
         res = await db.execute(query)
         return list(res.scalars().all())
 

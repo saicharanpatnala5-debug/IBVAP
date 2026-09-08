@@ -99,6 +99,16 @@ async def websocket_alerts_endpoint(websocket: WebSocket):
 
 @app.get("/dashboard", include_in_schema=False)
 @app.get("/ui", include_in_schema=False)
+@app.get("/live", include_in_schema=False)
+@app.get("/cameras", include_in_schema=False)
+@app.get("/alerts", include_in_schema=False)
+@app.get("/incidents", include_in_schema=False)
+@app.get("/incident-details", include_in_schema=False)
+@app.get("/search", include_in_schema=False)
+@app.get("/analytics", include_in_schema=False)
+@app.get("/map", include_in_schema=False)
+@app.get("/settings", include_in_schema=False)
+@app.get("/upload", include_in_schema=False)
 async def serve_dashboard():
     static_file = os.path.join(os.path.dirname(__file__), "static", "index.html")
     if os.path.exists(static_file):

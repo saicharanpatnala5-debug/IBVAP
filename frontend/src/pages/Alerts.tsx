@@ -5,7 +5,7 @@ import { AlertDetailModal } from '../components/alerts/AlertDetailModal';
 import { useAlerts } from '../hooks/useAlerts';
 import { SEOHead } from '../components/common/SEOHead';
 import { Alert } from '../types';
-import { Bell, CheckCheck, Download } from 'lucide-react';
+import { Bell, CheckCheck,  } from 'lucide-react';
 
 export const Alerts: React.FC = () => {
   const { alerts, setAlerts } = useAlerts();
@@ -35,10 +35,7 @@ export const Alerts: React.FC = () => {
             <CheckCheck className="w-4 h-4 text-emerald-400" />
             <span>Acknowledge All</span>
           </button>
-          <button className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 flex items-center space-x-1.5">
-            <Download className="w-4 h-4 text-cyan-400" />
-            <span>Export CSV</span>
-          </button>
+          
         </div>
       </div>
 

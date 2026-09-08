@@ -2,7 +2,8 @@ import React from 'react';
 import { Breadcrumbs } from '../components/common/Breadcrumbs';
 import { useCameras } from '../hooks/useCameras';
 import { SEOHead } from '../components/common/SEOHead';
-import { Camera, Radio, Plus, CheckCircle, AlertTriangle } from 'lucide-react';
+import { formatSensorType } from '../utils/formatters';
+import { Video, Shield, Activity, Plus } from 'lucide-react';
 
 export const Cameras: React.FC = () => {
   const { cameras } = useCameras();
@@ -21,15 +22,15 @@ export const Cameras: React.FC = () => {
 
       <div className="rounded-3xl liquid-glass border border-slate-800 overflow-hidden shadow-2xl">
         <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-          <h3 className="text-xs font-bold text-white font-mono uppercase tracking-wider">
-            BORDER SECTOR CAMERA INVENTORY ({cameras.length})
+          <h3 className="text-xs font-bold text-white font-mono tracking-wider">
+            Border Sector Camera Inventory ({cameras.length})
           </h3>
           <span className="text-[10px] font-mono text-emerald-400">All Edge Feeds Active</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-slate-900/80 border-b border-slate-800 text-slate-400 text-[10px] uppercase">
+            <thead className="bg-slate-900/80 border-b border-slate-800 text-slate-400 text-[10px]">
               <tr>
                 <th className="p-4">Camera ID</th>
                 <th className="p-4">Designation</th>
@@ -44,15 +45,15 @@ export const Cameras: React.FC = () => {
                 <tr key={c.camera_id} className="hover:bg-slate-900/40 transition-colors">
                   <td className="p-4 font-bold text-white">{c.camera_id}</td>
                   <td className="p-4 text-slate-300">{c.name}</td>
-                  <td className="p-4 text-cyan-400">{c.sensor_type || 'OPTICAL_4K'}</td>
+                  <td className="p-4 text-cyan-400">{formatSensorType(c.sensor_type)}</td>
                   <td className="p-4 text-slate-400">{c.fps.toFixed(1)} FPS / 14ms</td>
                   <td className="p-4">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
                       c.status === 'ONLINE'
                         ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
                         : 'bg-amber-500/20 text-amber-400 border-amber-500/40'
                     }`}>
-                      {c.status}
+                      {c.status.charAt(0) + c.status.slice(1).toLowerCase()}
                     </span>
                   </td>
                   <td className="p-4">

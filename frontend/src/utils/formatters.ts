@@ -69,3 +69,68 @@ export function formatCurrencyINR(amount: number): string {
     maximumFractionDigits: 0,
   }).format(amount);
 }
+
+export function formatSeverityLabel(severity?: string): string {
+  if (!severity) return 'Normal';
+  const s = severity.toUpperCase();
+  switch (s) {
+    case 'CRITICAL':
+      return 'Critical';
+    case 'HIGH':
+      return 'High';
+    case 'MEDIUM':
+      return 'Medium';
+    case 'LOW':
+      return 'Low';
+    case 'NORMAL':
+    default:
+      return 'Normal';
+  }
+}
+
+export function formatSensorType(type?: string): string {
+  if (!type) return '4K Optical';
+  const t = type.toUpperCase();
+  switch (t) {
+    case 'OPTICAL_4K':
+      return '4K Optical';
+    case 'THERMAL_LWIR':
+      return 'Thermal LWIR';
+    case 'RADAR_FMCW':
+      return 'Radar FMCW';
+    case 'ANPR_CAMERA':
+      return 'ANPR Camera';
+    case 'STARLIGHT_PTZ':
+      return 'Starlight PTZ';
+    case 'PTZ_TRACKER':
+      return 'PTZ Tracker';
+    case 'IR_NIGHT':
+      return 'IR Night';
+    default:
+      return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+}
+
+export function formatRuleTriggered(rule?: string): string {
+  if (!rule) return 'Perimeter Protocol';
+  const r = rule.toUpperCase();
+  switch (r) {
+    case 'CROSSING_DETECTED':
+      return 'Perimeter Crossing';
+    case 'LOITERING_ALERT':
+    case 'LOITERING':
+      return 'Loitering Detected';
+    case 'DIRECTION_ANOMALY':
+      return 'Wrong-Way Movement';
+    case 'TAMPER_DETECTED':
+      return 'Camera Tampering';
+    case 'ZONE_BREACH':
+      return 'Zone Breach';
+    case 'ZONE_INTRUSION':
+      return 'Zone Intrusion';
+    case 'BREACH_DETECTED':
+      return 'Breach Detected';
+    default:
+      return rule.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+}

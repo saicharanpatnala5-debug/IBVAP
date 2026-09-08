@@ -4,9 +4,10 @@ import {
   Play, Pause, RotateCcw, ShieldAlert, Cpu, Sparkles, Plus, 
   CheckCircle2, ChevronRight, Repeat, Maximize, FileVideo, Check
 } from 'lucide-react';
-import { Camera } from '../../types';
+import { Camera, TacticalDetection } from '../../types';
 import { TacticalDetectionOverlay } from './TacticalDetectionOverlay';
-import { getDetectionsForTime, registerVideoBlob } from '../../utils/detectionEngine';
+import { getDetectionsForTime, registerVideoBlob, computeTelemetry } from '../../utils/detectionEngine';
+import { CurrentVideoContext } from '../../store/useVideoPlayerState';
 
 interface TacticalIngestionHubProps {
   onOpenUploadModal: (videoUrl?: string, videoTitle?: string) => void;
@@ -40,6 +41,9 @@ export const TacticalIngestionHub: React.FC<TacticalIngestionHubProps> = ({
   const [activeFootageUrl, setActiveFootageUrl] = useState<string>(SAMPLE_SCENARIOS[1].url);
   const [activeFootageTitle, setActiveFootageTitle] = useState<string>(SAMPLE_SCENARIOS[1].name);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [currentVideoContext, setCurrentVideoContext] = useState<CurrentVideoContext | null>(null);
+  const [trackingArrays, setTrackingArrays] = useState<TacticalDetection[]>([]);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isLooping, setIsLooping] = useState<boolean>(true);
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -53,6 +57,42 @@ export const TacticalIngestionHub: React.FC<TacticalIngestionHubProps> = ({
       videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   }, [activeFootageUrl, isLooping]);
+
+  /**
+   * STRICT TEARDOWN & VIDEO MEMORY FLUSH
+   * Before initializing any new video stream:
+   * 1. Clears previous video's canvas context
+   * 2. Resets all tracking arrays to []
+   * 3. Flushes currentVideoContext to null
+   * 4. Revokes previous blob URLs and unloads HTML5 video buffers
+   */
+  const strictTeardownVideoMemory = () => {
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+      }
+    }
+    setTrackingArrays([]);
+    setCurrentVideoContext(null);
+
+    if (activeFootageUrl && activeFootageUrl.startsWith('blob:')) {
+      try {
+        URL.revokeObjectURL(activeFootageUrl);
+      } catch (e) {
+        console.warn('Failed to revoke blob URL:', e);
+      }
+    }
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.removeAttribute('src');
+      videoRef.current.load();
+    }
+    setIsPlaying(false);
+    setCurrentTime(0);
+  };
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -77,10 +117,32 @@ export const TacticalIngestionHub: React.FC<TacticalIngestionHubProps> = ({
   };
 
   const processFile = (file: File) => {
+    // MUST explicitly call strict teardown function before initializing new video stream
+    strictTeardownVideoMemory();
+
     setActiveFootageTitle(file.name);
     const url = URL.createObjectURL(file);
     registerVideoBlob(url, file.name);
     setActiveFootageUrl(url);
+
+    const initialDetections = getDetectionsForTime(file.name, 0, 30, url);
+    setTrackingArrays(initialDetections);
+
+    setCurrentVideoContext({
+      streamId: `stream-${Date.now()}`,
+      fileName: file.name,
+      videoUrl: url,
+      fps: 30.0,
+      resolution: '1920x1080',
+      duration: 0,
+      currentTime: 0,
+      status: 'LOADING',
+      activeModel: 'yolo26x',
+      sourceType: 'LOCAL_UPLOAD',
+      telemetry: computeTelemetry(initialDetections),
+      createdAt: new Date().toISOString()
+    });
+
     setTimeout(() => {
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
@@ -197,6 +259,12 @@ export const TacticalIngestionHub: React.FC<TacticalIngestionHubProps> = ({
                     videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
                   }
                 }}
+              />
+
+              {/* Hardware-accelerated canvas for frame extraction and optical flow overlays */}
+              <canvas
+                ref={canvasRef}
+                className="absolute inset-0 pointer-events-none w-full h-full z-10"
               />
 
               {/* Real-time Multi-Class Tactical Detection Overlay */}

@@ -1,3 +1,5 @@
+import { offlineSyncManager } from './offlineSyncService';
+
 export class TacticalWebSocketClient {
   private ws: WebSocket | null = null;
   private url: string;
@@ -19,6 +21,7 @@ export class TacticalWebSocketClient {
       this.ws.onopen = () => {
         console.log('[IBVAP WS] Connected to Tactical Stream');
         this.reconnectAttempts = 0;
+        offlineSyncManager.setConnectionState(true);
       };
 
       this.ws.onmessage = (event) => {
@@ -31,6 +34,7 @@ export class TacticalWebSocketClient {
       };
 
       this.ws.onclose = () => {
+        offlineSyncManager.setConnectionState(false);
         if (!this.isIntentionalClose) {
           this.scheduleReconnect();
         }
@@ -38,10 +42,12 @@ export class TacticalWebSocketClient {
 
       this.ws.onerror = (err) => {
         console.warn('[IBVAP WS] Connection issue, retrying...', err);
+        offlineSyncManager.setConnectionState(false);
         this.ws?.close();
       };
     } catch (err) {
       console.warn('[IBVAP WS] Offline mode or proxy inactive', err);
+      offlineSyncManager.setConnectionState(false);
       this.scheduleReconnect();
     }
   }
