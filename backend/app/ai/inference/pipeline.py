@@ -10,29 +10,10 @@ Unifies the core AI technologies into a single per-frame processing pipeline:
 7. Real OCR Character Recognition (EasyOCR with multi-frame voting)
 8. Behavioral Intelligence: virtual fence breach with cooldown, loitering detection, and compound pattern rules
 """
-import os
-import sys
 from typing import List, Dict, Any, Optional
 import time
 import logging
 import numpy as np
-
-# Ensure root and backend directories are on sys.path for direct CLI execution
-_here = os.path.dirname(os.path.abspath(__file__))
-_candidate_dirs = [
-    _here,
-    os.path.abspath(os.path.join(_here, "..")),
-    os.path.abspath(os.path.join(_here, "..", "..")),
-    os.path.abspath(os.path.join(_here, "..", "..", "..")),
-    os.path.abspath(os.path.join(_here, "..", "..", "..", "..")),
-]
-for _d in _candidate_dirs:
-    if os.path.isdir(os.path.join(_d, "ai")) or os.path.isdir(os.path.join(_d, "backend")):
-        if _d not in sys.path:
-            sys.path.insert(0, _d)
-    if os.path.isdir(os.path.join(_d, "app")):
-        if _d not in sys.path:
-            sys.path.insert(0, _d)
 
 logger = logging.getLogger("ibvap.pipeline")
 
@@ -364,43 +345,3 @@ class VideoAnalyticsPipeline:
 
 pipeline = VideoAnalyticsPipeline()
 analytics_pipeline = pipeline
-
-
-if __name__ == "__main__":
-    print("=" * 65)
-    print("  IBVAP - Master Video Analytics Pipeline Direct Execution")
-    print("  Smart India Hackathon (SIH 2026)")
-    print("=" * 65)
-
-    print("\n[1/3] Hardware & Neural Backend:")
-    hw = get_device_telemetry()
-    print(f"  Device:         {hw.get('device', 'cpu')}")
-    print(f"  PyTorch:        {hw.get('torch_version', 'N/A')}")
-    print(f"  CUDA Available: {hw.get('cuda_available', False)}")
-
-    print("\n[2/3] Initializing Pipeline & Real Models...")
-    detector_health = pipeline.detector.get_health()
-    print(f"  Detector:        {detector_health.get('model_name')} ({detector_health.get('status')})")
-    print(f"  Weights Source:  {detector_health.get('weights_source')}")
-    print(f"  Detector Ready:  {pipeline.detector.is_ready()}")
-
-    print("\n[3/3] Processing Sample Surveillance Frame (720x1280 RGB)...")
-    sample_frame = np.full((720, 1280, 3), 45, dtype=np.uint8)
-    result = pipeline.process_frame(camera_id="BOP-SECTOR-4-CAM-01", frame=sample_frame)
-
-    print("\n--- Pipeline Execution Output ---")
-    print(f"  Camera ID:         {result.get('camera_id')}")
-    print(f"  Perception Engine: {result.get('perception_engine')}")
-    print(f"  Latency:           {result.get('latency_ms')} ms")
-    print(f"  Detections:        {len(result.get('detections', []))} objects")
-    print(f"  Active Tracks:     {len(result.get('tracked_objects', []))}")
-    print(f"  Faces Detected:    {len(result.get('face_sightings', []))}")
-    print(f"  ANPR Sightings:    {len(result.get('anpr_sightings', []))}")
-    print(f"  Night Assessment:  {result.get('night_assessment', {}).get('status', 'N/A')}")
-    print(f"  Risk Assessment:   Score {result.get('risk_score')}/100 [{result.get('severity')}]")
-    card = result.get('explainability_card') or {}
-    print(f"  Explainability:    {card.get('what', 'Baseline Assessment')}")
-
-    stats = pipeline.get_pipeline_stats()
-    print(f"\n[PASS] Pipeline Operational — Stats: {stats}")
-    print("=" * 65)
