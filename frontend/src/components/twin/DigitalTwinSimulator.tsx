@@ -20,7 +20,7 @@ export interface SimulatedOutpost {
   name: string;
   sector: string;
   activeAlerts: number;
-  qrtStatus: 'IDLE' | 'DEPLOYED' | 'INTERCEPTING';
+  unitStatus: 'STANDBY' | 'ON PATROL' | 'RESPONDING';
   interceptEta: string;
   threatRisk: number;
 }
@@ -33,11 +33,11 @@ export const DigitalTwinSimulator: React.FC<{ onClose?: () => void }> = ({ onClo
   const [injectedCount, setInjectedCount] = useState(0);
 
   const [outposts, setOutposts] = useState<SimulatedOutpost[]>([
-    { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 1, qrtStatus: 'IDLE', interceptEta: '4m 10s', threatRisk: 45 },
-    { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 2, qrtStatus: 'DEPLOYED', interceptEta: '2m 15s', threatRisk: 78 },
-    { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 0, qrtStatus: 'IDLE', interceptEta: '5m 30s', threatRisk: 22 },
-    { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 1, qrtStatus: 'IDLE', interceptEta: '3m 45s', threatRisk: 50 },
-    { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 0, qrtStatus: 'IDLE', interceptEta: '6m 00s', threatRisk: 15 }
+    { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 1, unitStatus: 'STANDBY', interceptEta: '4m 10s', threatRisk: 45 },
+    { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 2, unitStatus: 'ON PATROL', interceptEta: '2m 15s', threatRisk: 78 },
+    { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 0, unitStatus: 'STANDBY', interceptEta: '5m 30s', threatRisk: 22 },
+    { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 1, unitStatus: 'STANDBY', interceptEta: '3m 45s', threatRisk: 50 },
+    { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 0, unitStatus: 'STANDBY', interceptEta: '6m 00s', threatRisk: 15 }
   ]);
 
   const handleInjectScenario = (scenarioKey: 'breaches' | 'convoy' | 'fog') => {
@@ -52,31 +52,31 @@ export const DigitalTwinSimulator: React.FC<{ onClose?: () => void }> = ({ onClo
         setThreatLevel('CRITICAL');
         setInjectedCount(5);
         setOutposts([
-          { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 3, qrtStatus: 'INTERCEPTING', interceptEta: '1m 45s', threatRisk: 125 },
-          { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 4, qrtStatus: 'INTERCEPTING', interceptEta: '1m 20s', threatRisk: 132 },
-          { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 2, qrtStatus: 'DEPLOYED', interceptEta: '2m 10s', threatRisk: 95 },
-          { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 3, qrtStatus: 'INTERCEPTING', interceptEta: '1m 55s', threatRisk: 110 },
-          { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 1, qrtStatus: 'DEPLOYED', interceptEta: '3m 00s', threatRisk: 65 }
+          { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 3, unitStatus: 'RESPONDING', interceptEta: '1m 45s', threatRisk: 125 },
+          { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 4, unitStatus: 'RESPONDING', interceptEta: '1m 20s', threatRisk: 132 },
+          { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 2, unitStatus: 'ON PATROL', interceptEta: '2m 10s', threatRisk: 95 },
+          { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 3, unitStatus: 'RESPONDING', interceptEta: '1m 55s', threatRisk: 110 },
+          { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 1, unitStatus: 'ON PATROL', interceptEta: '3m 00s', threatRisk: 65 }
         ]);
       } else if (scenarioKey === 'convoy') {
         setThreatLevel('HIGH');
         setInjectedCount(4);
         setOutposts([
-          { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 1, qrtStatus: 'IDLE', interceptEta: '4m 10s', threatRisk: 45 },
-          { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 5, qrtStatus: 'INTERCEPTING', interceptEta: '1m 15s', threatRisk: 118 },
-          { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 1, qrtStatus: 'DEPLOYED', interceptEta: '3m 00s', threatRisk: 55 },
-          { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 0, qrtStatus: 'IDLE', interceptEta: '4m 00s', threatRisk: 30 },
-          { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 0, qrtStatus: 'IDLE', interceptEta: '6m 00s', threatRisk: 15 }
+          { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 1, unitStatus: 'STANDBY', interceptEta: '4m 10s', threatRisk: 45 },
+          { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 5, unitStatus: 'RESPONDING', interceptEta: '1m 15s', threatRisk: 118 },
+          { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 1, unitStatus: 'ON PATROL', interceptEta: '3m 00s', threatRisk: 55 },
+          { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 0, unitStatus: 'STANDBY', interceptEta: '4m 00s', threatRisk: 30 },
+          { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 0, unitStatus: 'STANDBY', interceptEta: '6m 00s', threatRisk: 15 }
         ]);
       } else if (scenarioKey === 'fog') {
         setThreatLevel('MEDIUM');
         setInjectedCount(3);
         setOutposts([
-          { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 2, qrtStatus: 'DEPLOYED', interceptEta: '2m 50s', threatRisk: 82 },
-          { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 2, qrtStatus: 'DEPLOYED', interceptEta: '2m 30s', threatRisk: 75 },
-          { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 3, qrtStatus: 'INTERCEPTING', interceptEta: '2m 05s', threatRisk: 90 },
-          { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 2, qrtStatus: 'DEPLOYED', interceptEta: '3m 15s', threatRisk: 80 },
-          { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 1, qrtStatus: 'DEPLOYED', interceptEta: '3m 30s', threatRisk: 70 }
+          { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 2, unitStatus: 'ON PATROL', interceptEta: '2m 50s', threatRisk: 82 },
+          { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 2, unitStatus: 'ON PATROL', interceptEta: '2m 30s', threatRisk: 75 },
+          { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 3, unitStatus: 'RESPONDING', interceptEta: '2m 05s', threatRisk: 90 },
+          { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 2, unitStatus: 'ON PATROL', interceptEta: '3m 15s', threatRisk: 80 },
+          { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 1, unitStatus: 'ON PATROL', interceptEta: '3m 30s', threatRisk: 70 }
         ]);
       }
     }, 450);
@@ -87,16 +87,16 @@ export const DigitalTwinSimulator: React.FC<{ onClose?: () => void }> = ({ onClo
     setThreatLevel('LOW');
     setInjectedCount(0);
     setOutposts([
-      { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 1, qrtStatus: 'IDLE', interceptEta: '4m 10s', threatRisk: 45 },
-      { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 2, qrtStatus: 'DEPLOYED', interceptEta: '2m 15s', threatRisk: 78 },
-      { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 0, qrtStatus: 'IDLE', interceptEta: '5m 30s', threatRisk: 22 },
-      { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 1, qrtStatus: 'IDLE', interceptEta: '3m 45s', threatRisk: 50 },
-      { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 0, qrtStatus: 'IDLE', interceptEta: '6m 00s', threatRisk: 15 }
+      { id: 'BOP-01', name: 'Mechi River Post', sector: 'Sector Alpha', activeAlerts: 1, unitStatus: 'STANDBY', interceptEta: '4m 10s', threatRisk: 45 },
+      { id: 'BOP-02', name: 'Panitanki Integrated CP', sector: 'Sector Alpha', activeAlerts: 2, unitStatus: 'ON PATROL', interceptEta: '2m 15s', threatRisk: 78 },
+      { id: 'BOP-03', name: 'Naxalbari Forest Gate', sector: 'Sector Beta', activeAlerts: 0, unitStatus: 'STANDBY', interceptEta: '5m 30s', threatRisk: 22 },
+      { id: 'BOP-04', name: 'Galgalia Tea Corridor', sector: 'Sector Beta', activeAlerts: 1, unitStatus: 'STANDBY', interceptEta: '3m 45s', threatRisk: 50 },
+      { id: 'BOP-05', name: 'Sukhiapokhri Ridge', sector: 'Sector Gamma', activeAlerts: 0, unitStatus: 'STANDBY', interceptEta: '6m 00s', threatRisk: 15 }
     ]);
   };
 
   const totalSimulatedAlerts = outposts.reduce((sum, o) => sum + o.activeAlerts, 0);
-  const avgQrtEta = simulationActive ? '1m 42s' : '4m 20s';
+  const avgResponseTime = simulationActive ? '1m 42s' : '4m 20s';
 
   return (
     <div className="rounded-2xl liquid-glass border border-cyan-500/40 p-5 space-y-5 shadow-2xl animate-fade-in font-mono text-slate-200">
@@ -171,7 +171,7 @@ export const DigitalTwinSimulator: React.FC<{ onClose?: () => void }> = ({ onClo
               <span className="text-xs font-bold text-white">5 Coordinated Breaches</span>
             </div>
             <p className="text-[11px] text-slate-400 leading-snug">
-              Simulates simultaneous intrusions across Sector Alpha & Beta; tests multi-outpost alert distribution and QRT intercept convergence.
+              Simulates simultaneous intrusions across Sector Alpha & Beta; tests multi-outpost alert distribution and field unit response coordination.
             </p>
           </button>
 
@@ -228,9 +228,9 @@ export const DigitalTwinSimulator: React.FC<{ onClose?: () => void }> = ({ onClo
         </div>
 
         <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-          <div className="text-slate-400 text-[10px]">AVG QRT INTERCEPT TIME</div>
+          <div className="text-slate-400 text-[10px]">AVG FIELD RESPONSE TIME</div>
           <div className="text-xl font-bold text-emerald-400 mt-0.5">
-            {avgQrtEta}
+            {avgResponseTime}
           </div>
         </div>
 
@@ -274,13 +274,13 @@ export const DigitalTwinSimulator: React.FC<{ onClose?: () => void }> = ({ onClo
                     <span className="font-bold text-xs text-white">{post.id}</span>
                   </div>
                   <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase ${
-                    post.qrtStatus === 'INTERCEPTING'
+                    post.unitStatus === 'RESPONDING'
                       ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'
-                      : post.qrtStatus === 'DEPLOYED'
+                      : post.unitStatus === 'ON PATROL'
                       ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
                       : 'bg-slate-800 text-slate-400 border-slate-700'
                   }`}>
-                    {post.qrtStatus}
+                    {post.unitStatus}
                   </span>
                 </div>
 

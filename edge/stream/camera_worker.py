@@ -3,7 +3,7 @@ IBVAP - Per-Camera Ingestion & Inference Dispatch Worker
 Connects stream ingestion to edge inference and offline buffer storage.
 """
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from edge.stream.rtsp_client import EdgeRTSPClient
 from edge.stream.frame_buffer import CircularFrameBuffer
 from edge.stream.stream_validator import StreamValidator
@@ -23,6 +23,17 @@ class CameraWorker:
         ret, frame = self.client.read_frame()
         health = self.validator.record_frame()
         self.buffer.append_frame(frame, health)
+
+        # Skip inference if no real frame was received
+        if not ret or frame is None:
+            return {
+                "camera_id": self.camera_id,
+                "status": "NO_FRAME",
+                "fps": 0.0,
+                "risk_score": 0,
+                "severity": "NORMAL",
+                "breaches": [],
+            }
 
         # Run Edge Inference
         result = edge_engine.process_edge_frame(

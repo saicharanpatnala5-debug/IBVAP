@@ -32,7 +32,7 @@ export const IncidentDetails: React.FC<IncidentDetailsProps> = ({
         <div className="flex items-center space-x-3">
           <button className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 flex items-center space-x-1.5">
             <Share2 className="w-4 h-4 text-cyan-400" />
-            <span>Forward to QRT</span>
+            <span>Forward to Field Unit</span>
           </button>
           <button className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-obsidian font-bold text-xs font-mono flex items-center space-x-1.5 shadow-tactical-glow">
             <Download className="w-4 h-4" />

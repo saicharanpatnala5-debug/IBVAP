@@ -126,3 +126,12 @@ scratch/
 
 backend/app/static/videos/*.mp4
 test
+
+# Inference runs and detection recordings
+backend/runs/
+runs/
+*.avi
+backend/static/detect/
+static/detect/
+static_test2/
+*WhatsApp*

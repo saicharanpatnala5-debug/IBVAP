@@ -62,6 +62,7 @@ export interface Alert {
   acknowledged_at?: string;
   created_at: string;
   snapshot_url?: string;
+  evidence_frame_url?: string;
   confidence?: number;
   contributing_factors?: string[];
 }
@@ -168,6 +169,11 @@ export interface TacticalDetection {
     anpr_norm?: string;
     anpr_status?: string;
     anpr_confidence?: number;
+    ocr_confidence?: number;
+    confidence_percentage_ocr?: string;
+    verification_status?: string;
+    requires_human_verification?: boolean;
+    is_hotlisted?: boolean;
     owner_lookup_url?: string;
     payload_type?: string;
     species?: string;
@@ -175,6 +181,7 @@ export interface TacticalDetection {
     distance_m?: number;
     behavior?: string;
     thermal_delta_c?: string;
+    [key: string]: any;
   };
 }
 

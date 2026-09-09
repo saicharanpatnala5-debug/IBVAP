@@ -98,24 +98,41 @@ export async function captureAndInferFrame(
 
   try {
     const canvas = document.createElement('canvas');
-    // Scale frame to 640x360 for low latency edge CV inference
-    canvas.width = 640;
-    canvas.height = 360;
+    // Scale frame up to 1280x720 for sharp ANPR OCR and low latency edge CV inference
+    const origW = videoEl.videoWidth || 1280;
+    const origH = videoEl.videoHeight || 720;
+    const targetW = Math.min(1280, origW);
+    const targetH = Math.round((targetW / origW) * origH);
+    canvas.width = targetW;
+    canvas.height = targetH;
     const ctx = canvas.getContext('2d');
     if (!ctx) return { status: 'SUCCESS', detections: [] };
 
-    ctx.drawImage(videoEl, 0, 0, 640, 360);
-    const frameBase64 = canvas.toDataURL('image/jpeg', 0.80);
+    ctx.drawImage(videoEl, 0, 0, targetW, targetH);
+    const frameBase64 = canvas.toDataURL('image/jpeg', 0.85);
 
-    const res = await fetch('/api/detections/infer-cctv-frame', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        frame_base64: frameBase64,
-        camera_id: cameraId,
-        is_thermal: isThermal,
-      }),
-    });
+    let res: Response;
+    try {
+      res = await fetch('/api/detections/infer-cctv-frame', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          frame_base64: frameBase64,
+          camera_id: cameraId,
+          is_thermal: isThermal,
+        }),
+      });
+    } catch {
+      res = await fetch('http://localhost:8000/api/detections/infer-cctv-frame', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          frame_base64: frameBase64,
+          camera_id: cameraId,
+          is_thermal: isThermal,
+        }),
+      });
+    }
 
     if (!res.ok) return { status: 'SUCCESS', detections: [] };
     const data = await res.json();

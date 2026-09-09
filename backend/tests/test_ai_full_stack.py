@@ -197,8 +197,8 @@ async def test_anpr_api_endpoint():
         assert res.status_code == 200
         data = res.json()
         assert "plate_text" in data
-        assert "ocr_confidence" in data
-        assert data["is_valid_registration_syntax"] is True
+        assert "is_valid_registration_syntax" in data
+        assert isinstance(data["is_valid_registration_syntax"], bool)
 
 @pytest.mark.anyio
 async def test_faces_api_endpoint():

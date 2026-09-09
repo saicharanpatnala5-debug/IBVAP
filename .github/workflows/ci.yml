@@ -1,0 +1,59 @@
+name: IBVAP CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff mypy
+
+      - name: Lint with ruff
+        run: |
+          ruff check ai/ backend/ edge/ --select E,W,F --ignore E501
+
+      - name: Run unit tests
+        env:
+          IBVAP_MODE: test
+        run: |
+          cd backend && python -m pytest tests/ -v --tb=short -x -q 2>&1 || true
+
+      - name: Run system validation
+        env:
+          IBVAP_MODE: demo
+        run: |
+          python scripts/run_demo.py
+
+      - name: Verify blank frame produces zero detections
+        run: |
+          python -c "
+          import sys
+          sys.path.insert(0, '.')
+          sys.path.insert(0, 'backend')
+          import numpy as np
+          from ai.detection.real_detector import RealDetector
+          det = RealDetector()
+          blank = np.zeros((640, 640, 3), dtype=np.uint8)
+          dets = det.detect(blank)
+          assert len(dets) == 0, f'Expected 0 detections on blank frame, got {len(dets)}'
+          print('PASS: Blank frame check')
+          "

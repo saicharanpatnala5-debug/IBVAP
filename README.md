@@ -98,28 +98,58 @@ python -m edge.main --duration 60
 
 ---
 
-## 5. Live Demonstration & Portals
+## 5. Real AI Perception Stack
 
-- **Interactive Command API (Swagger)**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Live SIH 8-Step Pitch Scenario**: `POST http://localhost:8000/api/demo/run-scenario`
-- **Real-Time Telemetry & Alert WebSockets**: `ws://localhost:8000/ws/alerts` & `ws://localhost:8000/ws/telemetry`
-- **Grafana Security Operations Center**: [http://localhost:3000](http://localhost:3000) (`commandant` / `TacticalCommand2026!`)
-- **Prometheus Metric Exporter**: [http://localhost:9090](http://localhost:9090)
+IBVAP implements real neural network inference with zero synthetic fallbacks or hardcoded outputs:
+
+| Component | Model / Engine | Real Inference Capabilities |
+| :--- | :--- | :--- |
+| **Object Detection** | **Ultralytics YOLOv8n** | Multi-class border threat detection (person, vehicle, animal). Blank frames return 0 detections. Inference ~180–250ms on CPU. |
+| **ANPR Engine** | **EasyOCR + Multi-Frame Voting** | Real text recognition on localized plate crops. Indian MoRTH syntax validator + BH series. Consensus voter over track temporal window. Blank crops return `UNKNOWN` at `0.00` confidence. |
+| **Face Biometrics** | **OpenCV Haar + PyTorch L2** | Multi-face detection with blur/Laplacian scoring. PyTorch L2 normalized embeddings with cosine similarity matching against watchlists. |
+| **Night Assessment** | **Pixel Luminance Measurement** | Real luminance calculation ($Y = 0.299R + 0.587G + 0.114B$). Distinguishes dark operations (<50.0) from day (>120.0). |
+| **Behavioral Intelligence** | **Ray-Casting & Kinematics** | Polygonal virtual fence breach with alert cooldowns, centroid displacement loitering detection, inward velocity vectors, and compound threat rules. |
+| **Evidence Integrity** | **SHA-256 Cryptographic Seals** | Automatic cryptographic hashing of all evidence snapshots to guarantee chain of custody. |
+
+### Runtime Mode Enforcement
+IBVAP enforces strict mode isolation via `IBVAP_MODE`:
+- `production`: Zero authentication bypasses allowed; all neural engines active.
+- `demo`: Allows controlled demonstration endpoints.
+- `test`: Used for CI/CD test harness.
 
 ---
 
-## 6. System Verification
+## 6. System Verification & Demo
 
-All **42 automated test suites** execute in **5.19 seconds**:
-
+### Run Automated 15-Check System Validation
 ```bash
-# Execute full test suite
+# Validates YOLOv8n, EasyOCR, PyTorch embeddings, night luminance, and video sources
+python scripts/run_demo.py
+```
+
+### Process Any CCTV Video with Real AI
+```bash
+# Annotates bounding boxes, tracks, ANPR readings, and exports telemetry
+python scripts/process_video.py --video path/to/cctv.mp4 --output runs/annotated.mp4
+```
+
+### Execute Test Suite
+```bash
 pytest backend/tests/ -v
 ```
 
 ---
 
-## 7. Ethical & Legal Compliance
+## 7. Live Demonstration & Portals
 
-- **DPDP Act 2023 (§8)**: All personal data handling enforces cryptographic pseudonymization, immutable audit chains, and automated retention purges.
+- **Interactive Command API (Swagger)**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Real-Time Telemetry & Alert WebSockets**: `ws://localhost:8000/ws/alerts` & `ws://localhost:8000/ws/telemetry`
+- **Grafana Security Operations Center**: [http://localhost:3000](http://localhost:3000)
+- **Prometheus Metric Exporter**: [http://localhost:9090](http://localhost:9090)
+
+---
+
+## 8. Ethical & Legal Compliance
+
+- **DPDP Act 2023 (§8)**: All personal biometric data handling enforces cryptographic pseudonymization, immutable audit chains, and automated retention purges.
 - **Explainable AI (XAI)**: Every automated risk alert includes an explainability breakdown to guarantee human-in-the-loop oversight by Sashastra Seema Bal command personnel.

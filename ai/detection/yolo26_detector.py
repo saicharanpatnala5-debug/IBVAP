@@ -1,30 +1,27 @@
 """
-IBVAP - YOLO26 Next-Generation Border Perception Engine
-Engineered for SIH 2026 (Problem Statement: SIH26187 | SSB / Ministry of Home Affairs)
+IBVAP - YOLO26 Compatibility Wrapper
+Delegates all detection to the real YOLOv8n detector (real_detector.py).
+Preserves the YOLO26Detector class name and API for backward compatibility
+with existing tests and imports.
 
-Features:
-- Dual-Spectrum Cross-Attention (Optical 4K RGB + Thermal FLIR LWIR)
-- P2 High-Resolution Spatial Pyramid Pooling (SPPF-v26)
-- Sub-8.2ms TensorRT FP16 / INT8 Quantized Edge Profile
-- Small Target Long-Range Head (< 16x16 px crawling perimeter infiltrators)
-- Multi-Class Border Threat Taxonomy:
-  person, vehicle, drone, military_rucksack, weapon, wildlife
-- Dynamic Hardware Fallback: TensorRT -> ONNX Runtime -> Calibrated Vector Simulation
+The real inference is performed by ai.detection.real_detector.RealDetector.
 """
-import os
 import time
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional
 import numpy as np
 
 try:
     from ai.detection.detector import BaseDetector, BoundingBox
+    from ai.detection.real_detector import get_detector, RealDetector
 except ImportError:
     from app.ai.detection.detector import BaseDetector, BoundingBox
+    from app.ai.detection.real_detector import get_detector, RealDetector
 
 
 class YOLO26Detector(BaseDetector):
     """
-    YOLO26 Next-Generation Neural Object Detector for Sovereign Border Surveillance.
+    Backward-compatible wrapper that delegates to the real YOLOv8n detector.
+    Maintains the YOLO26Detector API so existing code/tests don't break.
     """
 
     def __init__(
@@ -37,234 +34,80 @@ class YOLO26Detector(BaseDetector):
         precision: str = "FP16"
     ):
         super().__init__(confidence_threshold=confidence_threshold, iou_threshold=iou_threshold)
-        self.architecture = "YOLO26s-BorderPerception"
-        self.version = "26.4.1"
-        self.enable_small_target_head = enable_small_target_head
-        self.enable_multi_spectral = enable_multi_spectral
+
+        # Delegate to real detector
+        self._real = get_detector()
+
+        # Backward-compat attributes
+        self.architecture = self._real.model_name
+        self.version = self._real.model_version
         self.precision = precision
         self.input_size = (640, 640)
-
-        # Specialized Border Threat Taxonomy
         self.classes = [
-            "person",             # 0: Foot intruder / patrol / crawling infiltrator
-            "vehicle",            # 1: Car, SUV, pickup, military convoy
-            "drone",              # 2: Low-altitude UAV / quadcopter
-            "military_rucksack",  # 3: Heavy tactical payload or smuggled contraband
-            "weapon",             # 4: Long-arm firearm / weapon silhouette
-            "wildlife"            # 5: Animal (canine, bovine, deer) auto-filtered
+            "person", "vehicle", "drone", "military_rucksack", "weapon", "wildlife"
         ]
-
         self.threat_classes = self.classes
-
-        # Threat severity scoring weights
         self.threat_weights = {
-            "person": 0.85,
-            "vehicle": 0.75,
-            "drone": 0.95,
-            "military_rucksack": 0.80,
-            "weapon": 0.99,
-            "wildlife": 0.10
+            "person": 0.85, "vehicle": 0.75, "drone": 0.95,
+            "military_rucksack": 0.80, "weapon": 0.99, "wildlife": 0.10
         }
-
-        # Resolve weights path
-        self.weights_path = weights_path or self._resolve_weights_path()
-        self.onnx_session = None
-        self._initialize_backend()
-
-    def _resolve_weights_path(self) -> str:
-        candidates = [
-            os.path.join(os.path.dirname(__file__), "models", "yolo26s.onnx"),
-            os.path.join("models", "yolo26s.onnx"),
-            os.path.join("ai", "detection", "models", "yolo26s.onnx"),
-            os.path.join("backend", "app", "ai", "detection", "models", "yolo26s.onnx"),
-        ]
-        for c in candidates:
-            if os.path.exists(c):
-                return c
-        return candidates[0]
-
-    def _initialize_backend(self):
-        try:
-            import onnxruntime as ort
-            if os.path.exists(self.weights_path):
-                providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
-                self.onnx_session = ort.InferenceSession(self.weights_path, providers=providers)
-        except Exception:
-            self.onnx_session = None
 
     def detect(self, frame: np.ndarray, is_thermal: bool = False) -> List[BoundingBox]:
-        """
-        Executes YOLO26 forward pass on input frame.
-        """
-        # If ONNX runtime is active and weights are valid
-        if self.onnx_session is not None:
-            try:
-                input_tensor = self._preprocess(frame)
-                input_name = self.onnx_session.get_inputs()[0].name
-                outputs = self.onnx_session.run(None, {input_name: input_tensor})
-                boxes = self._parse_onnx_outputs(outputs, is_thermal)
-                if boxes:
-                    return self.apply_nms(boxes)
-            except Exception:
-                pass
-
-        # High-performance calibrated deterministic neural simulation
-        boxes = self._simulate_yolo26_detections(frame, is_thermal)
-        filtered = [b for b in boxes if b.confidence >= self.confidence_threshold]
-        return self.apply_nms(filtered)
+        """Delegates to the real YOLOv8n detector."""
+        return self._real.detect(frame, is_thermal=is_thermal)
 
     def detect_multi_spectral(
-        self,
-        optical_frame: np.ndarray,
-        thermal_frame: np.ndarray
+        self, optical_frame: np.ndarray, thermal_frame: np.ndarray
     ) -> List[BoundingBox]:
         """
-        Dual-Spectrum Cross-Attention Detection.
-        Fuses Optical RGB with Thermal LWIR to penetrate camouflage, fog, and foliage.
+        Multi-spectral detection — runs real detection on optical frame.
+        True dual-spectrum fusion requires specialized hardware/models.
         """
-        optical_dets = self.detect(optical_frame, is_thermal=False)
-        thermal_dets = self.detect(thermal_frame, is_thermal=True)
+        optical_dets = self._real.detect(optical_frame, is_thermal=False)
+        thermal_dets = self._real.detect(thermal_frame, is_thermal=True)
 
-        fused = list(optical_dets)
-        for t_box in thermal_dets:
-            matched = False
-            for o_box in fused:
-                if self.compute_iou(t_box.to_xyxy(), o_box.to_xyxy()) > 0.35:
-                    # Multi-spectral boost: verified by both sensors!
-                    o_box.confidence = min(0.99, round(o_box.confidence + 0.08, 4))
-                    o_box.attributes["spectral_mode"] = "DUAL_SPECTRAL_VERIFIED"
-                    o_box.attributes["thermal_contrast"] = "HIGH_IR_SIGNATURE"
-                    matched = True
-                    break
-            if not matched:
-                # Target was obscured/camouflaged in RGB but visible in Thermal!
-                t_box.attributes["spectral_mode"] = "THERMAL_LWIR_ONLY"
-                t_box.attributes["camouflage_penetration"] = True
-                fused.append(t_box)
+        # Merge and deduplicate detections
+        all_dets = optical_dets + thermal_dets
+        for d in thermal_dets:
+            d.attributes["spectral_mode"] = "thermal"
+        for d in optical_dets:
+            d.attributes["spectral_mode"] = "optical"
 
-        return self.apply_nms(fused)
+        return self.apply_nms(all_dets) if all_dets else []
 
-    def detect_border_threats(self, frame: np.ndarray, is_thermal: bool = False) -> Dict[str, Any]:
-        """
-        High-level border threat assessment returned by YOLO26.
-        """
-        start_t = time.perf_counter()
+    def detect_border_threats(
+        self, frame: np.ndarray, is_thermal: bool = False
+    ) -> Dict[str, Any]:
+        """Generates real threat assessment metadata from actual detections."""
+        start = time.perf_counter()
         detections = self.detect(frame, is_thermal=is_thermal)
-        latency_ms = round((time.perf_counter() - start_t) * 1000.0, 2)
-        if latency_ms < 1.0:
-            latency_ms = 8.20  # Calibrated TensorRT FP16 benchmark latency
+        elapsed_ms = (time.perf_counter() - start) * 1000.0
 
-        counts = {cls: 0 for cls in self.classes}
+        # Build real threat summary
+        threat_summary = {}
         for d in detections:
-            if d.class_name in counts:
-                counts[d.class_name] += 1
+            cls = d.class_name
+            threat_summary[cls] = threat_summary.get(cls, 0) + 1
 
-        is_high_threat = (
-            counts["person"] > 0
-            or counts["weapon"] > 0
-            or counts["drone"] > 0
-            or counts["military_rucksack"] > 0
+        is_high_threat = any(
+            cls in ("person", "weapon", "drone") for cls in threat_summary
         )
 
+        health = self._real.get_health()
+
         return {
             "model": self.architecture,
             "version": self.version,
-            "precision": self.precision,
-            "latency_ms": latency_ms,
-            "mAP_50_95": 0.642,
-            "detections": [d.to_dict() for d in detections],
-            "threat_summary": counts,
+            "device": health.get("device", "cpu"),
+            "latency_ms": round(elapsed_ms, 2),
+            "mAP_50_95": None,  # Not measured — would require validation set
             "is_high_threat": is_high_threat,
-            "small_target_head_active": self.enable_small_target_head,
-            "multi_spectral_fusion": self.enable_multi_spectral,
+            "threat_summary": threat_summary,
+            "total_detections": len(detections),
+            "detections": [d.to_dict() for d in detections],
+            "status": "ONLINE_ACTIVE" if self._real.is_ready() else "MODEL_UNAVAILABLE",
         }
 
-    def get_benchmark_metrics(self) -> Dict[str, Any]:
-        """Returns calibrated TensorRT FP16 benchmark metrics."""
-        return {
-            "architecture": "YOLO26",
-            "model": self.architecture,
-            "version": self.version,
-            "latency_ms": 8.20,
-            "inference_fps": 121.9,
-            "mAP_50_95": 0.642,
-            "precision": self.precision,
-            "status": "ONLINE_ACTIVE"
-        }
 
-    def _preprocess(self, frame: np.ndarray) -> np.ndarray:
-        if len(frame.shape) == 2:
-            frame = np.stack([frame] * 3, axis=-1)
-        tensor = np.zeros((1, 3, 640, 640), dtype=np.float32)
-        return tensor
-
-    def _parse_onnx_outputs(self, outputs: Any, is_thermal: bool) -> List[BoundingBox]:
-        return []
-
-    def _simulate_yolo26_detections(self, frame: np.ndarray, is_thermal: bool) -> List[BoundingBox]:
-        dets = []
-        if is_thermal:
-            # Thermal camera: Detects heat signature at zero-tolerance wire
-            dets.append(
-                BoundingBox(
-                    x1=0.48, y1=0.32, x2=0.58, y2=0.68,
-                    confidence=0.962,
-                    class_id=0,
-                    class_name="person",
-                    attributes={
-                        "model": "YOLO26s",
-                        "posture": "crouching_crawl",
-                        "thermal_delta_c": "+8.4°C over ground",
-                        "small_target_p2_detected": True,
-                        "threat_level": "CRITICAL"
-                    }
-                )
-            )
-            # Military payload detected
-            dets.append(
-                BoundingBox(
-                    x1=0.52, y1=0.38, x2=0.57, y2=0.52,
-                    confidence=0.884,
-                    class_id=3,
-                    class_name="military_rucksack",
-                    attributes={
-                        "model": "YOLO26s",
-                        "payload_type": "dense_cargo",
-                        "threat_level": "HIGH"
-                    }
-                )
-            )
-        else:
-            # Optical camera: Detects Scorpio SUV at checkpoint approach
-            dets.append(
-                BoundingBox(
-                    x1=0.35, y1=0.45, x2=0.65, y2=0.85,
-                    confidence=0.948,
-                    class_id=1,
-                    class_name="vehicle",
-                    attributes={
-                        "model": "YOLO26s",
-                        "vehicle_type": "SUV_4x4",
-                        "speed_kmh": 42.0,
-                        "threat_level": "MODERATE"
-                    }
-                )
-            )
-            # Distant pedestrian near outer gate
-            dets.append(
-                BoundingBox(
-                    x1=0.70, y1=0.42, x2=0.76, y2=0.72,
-                    confidence=0.915,
-                    class_id=0,
-                    class_name="person",
-                    attributes={
-                        "model": "YOLO26s",
-                        "posture": "standing_patrol",
-                        "threat_level": "ELEVATED"
-                    }
-                )
-            )
-        return dets
-
-
+# Global singleton — backward compatibility
 yolo26_detector = YOLO26Detector()

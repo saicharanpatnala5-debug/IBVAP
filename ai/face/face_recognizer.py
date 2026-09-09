@@ -16,12 +16,33 @@ class FaceRecognizer:
 
     def verify_against_watchlist(
         self,
-        probe_embedding: np.ndarray,
+        probe_embedding: Optional[np.ndarray],
         watchlist_embeddings: Dict[str, np.ndarray]
     ) -> Dict[str, Any]:
         """
         Compares probe embedding against reference gallery.
+        Returns NO_EMBEDDING status when probe is None.
         """
+        if probe_embedding is None:
+            return {
+                "is_match": False,
+                "matched_identity": None,
+                "similarity_score": 0.0,
+                "confidence_level": "NONE",
+                "review_required": True,
+                "status": "NO_EMBEDDING — Face embedding extraction unavailable"
+            }
+
+        if not watchlist_embeddings:
+            return {
+                "is_match": False,
+                "matched_identity": None,
+                "similarity_score": 0.0,
+                "confidence_level": "NONE",
+                "review_required": False,
+                "status": "NO_WATCHLIST — No reference gallery loaded"
+            }
+
         best_match_id = None
         max_similarity = -1.0
 

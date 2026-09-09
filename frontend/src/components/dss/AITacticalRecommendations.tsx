@@ -17,7 +17,7 @@ export interface TacticalRecommendation {
   title: string;
   description: string;
   priority: 'CRITICAL' | 'HIGH' | 'MODERATE';
-  iconType: 'dispatch' | 'camera' | 'deterrent';
+  iconType: 'review' | 'camera' | 'deterrent';
   recommendedBy: string;
   timestamp: string;
   status: 'PENDING' | 'APPROVED' | 'MODIFIED' | 'REJECTED';
@@ -29,17 +29,18 @@ interface AITacticalRecommendationsProps {
   threatTitle?: string;
   threatScore?: number;
   cameraId?: string;
+  onActionApproved?: (actionId: string, actionName: string, status: string) => void;
   onActionDispatched?: (actionId: string, actionName: string, status: string) => void;
 }
 
 const DEFAULT_RECOMMENDATIONS: TacticalRecommendation[] = [
   {
     id: 'REC-01',
-    title: 'Dispatch Sector B Quick Reaction Team (QRT)',
-    description: 'Direct QRT-02 patrol vehicle to coordinate BOP-Alpha North perimeter. Intercept ETA: 2m 15s along inward infiltration vector.',
+    title: 'Notify Outpost Commander for Visual Verification',
+    description: 'Alert Sector B duty officer to review real-time optical and thermal feeds and coordinate ground verification along the perimeter.',
     priority: 'CRITICAL',
-    iconType: 'dispatch',
-    recommendedBy: 'IBVAP Threat Heuristics Engine',
+    iconType: 'review',
+    recommendedBy: 'IBVAP Threat Assessment Engine',
     timestamp: 'Just now',
     status: 'PENDING'
   },
@@ -70,19 +71,23 @@ export const AITacticalRecommendations: React.FC<AITacticalRecommendationsProps>
   threatTitle = 'Perimeter Breach Detected',
   threatScore = 118,
   cameraId = 'CAM-01',
+  onActionApproved,
   onActionDispatched
 }) => {
   const [recommendations, setRecommendations] = useState<TacticalRecommendation[]>(DEFAULT_RECOMMENDATIONS);
   const [editingRecId, setEditingRecId] = useState<string | null>(null);
   const [customNote, setCustomNote] = useState<string>('');
 
+  const notifyAction = (id: string, title: string, status: string) => {
+    if (onActionApproved) onActionApproved(id, title, status);
+    if (onActionDispatched) onActionDispatched(id, title, status);
+  };
+
   const handleApprove = (id: string) => {
     setRecommendations(prev => prev.map(rec => {
       if (rec.id === id) {
         const updated = { ...rec, status: 'APPROVED' as const };
-        if (onActionDispatched) {
-          onActionDispatched(rec.id, rec.title, 'APPROVED');
-        }
+        notifyAction(rec.id, rec.title, 'APPROVED');
         return updated;
       }
       return rec;
@@ -102,9 +107,7 @@ export const AITacticalRecommendations: React.FC<AITacticalRecommendationsProps>
           status: 'MODIFIED' as const,
           modifiedNotes: customNote 
         };
-        if (onActionDispatched) {
-          onActionDispatched(rec.id, rec.title, 'MODIFIED');
-        }
+        notifyAction(rec.id, rec.title, 'MODIFIED');
         return updated;
       }
       return rec;
@@ -125,8 +128,8 @@ export const AITacticalRecommendations: React.FC<AITacticalRecommendationsProps>
 
   const getIcon = (type: TacticalRecommendation['iconType']) => {
     switch (type) {
-      case 'dispatch':
-        return <Send className="w-4 h-4 text-rose-400" />;
+      case 'review':
+        return <Radio className="w-4 h-4 text-cyan-400" />;
       case 'camera':
         return <Camera className="w-4 h-4 text-cyan-400" />;
       case 'deterrent':
@@ -272,14 +275,14 @@ export const AITacticalRecommendations: React.FC<AITacticalRecommendationsProps>
               {isApproved && (
                 <div className="flex items-center space-x-1.5 text-emerald-400 text-[10px] font-bold pt-1 border-t border-emerald-500/20">
                   <UserCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                  <span>Authorized by Operator (HITL Certified • Dispatched)</span>
+                  <span>Authorized by Operator (HITL Certified • Action Logged)</span>
                 </div>
               )}
 
               {isModified && (
                 <div className="flex items-center space-x-1.5 text-amber-400 text-[10px] font-bold pt-1 border-t border-amber-500/20">
                   <UserCheck className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                  <span>Authorized with Operator Modifications • Dispatched</span>
+                  <span>Authorized with Operator Modifications • Action Logged</span>
                 </div>
               )}
             </div>

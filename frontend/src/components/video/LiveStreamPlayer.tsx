@@ -35,6 +35,7 @@ export const LiveStreamPlayer: React.FC<LiveStreamPlayerProps> = ({
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [fitMode, setFitMode] = useState<'contain' | 'cover'>('cover');
+  const [useDirectStream, setUseDirectStream] = useState<boolean>(false);
 
   // Dynamic 4-class detection filter states
   const [activeClasses, setActiveClasses] = useState<Record<DetectionClass, boolean>>({
@@ -201,36 +202,64 @@ export const LiveStreamPlayer: React.FC<LiveStreamPlayerProps> = ({
         ref={containerRef}
         className="relative aspect-video rounded-3xl overflow-hidden bg-black border border-slate-800 shadow-2xl group flex items-center justify-center"
       >
-        <video
-          ref={videoRef}
-          src={videoSource}
-          autoPlay
-          loop={isLooping}
-          muted={isMuted}
-          playsInline
-          className={`w-full h-full ${fitMode === 'contain' ? 'object-contain' : 'object-cover'}`}
-          onTimeUpdate={() => {
-            if (videoRef.current) setCurrentTime(videoRef.current.currentTime);
-          }}
-          onLoadedMetadata={() => {
-            if (videoRef.current) {
-              setDuration(videoRef.current.duration);
-              videoRef.current.loop = isLooping;
-              videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-            }
-          }}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          onEnded={() => {
-            if (isLooping && videoRef.current) {
-              videoRef.current.currentTime = 0;
-              videoRef.current.play().catch(() => {});
-            }
-          }}
-        />
+        {useDirectStream && !videoSource.startsWith('blob:') ? (
+          <div className="relative w-full h-full flex items-center justify-center bg-black overflow-hidden group">
+            <img
+              src={`http://localhost:8000/api/video_feed?video_path=${encodeURIComponent(videoSource)}&camera_id=${encodeURIComponent(camera.camera_id)}&is_thermal=${camera.sensor_type === 'THERMAL_LWIR'}`}
+              alt={`AI Stream ${camera.name}`}
+              className={`w-full h-full ${fitMode === 'contain' ? 'object-contain' : 'object-cover'}`}
+              onError={(err) => {
+                console.warn('Direct stream connection failed', err);
+                setUseDirectStream(false);
+              }}
+            />
+            {/* Top Tactical Status Badges */}
+            <div className="absolute top-3 left-3 z-30 flex items-center space-x-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/50 shadow-tactical-glow">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-[11px] font-mono font-bold text-emerald-400">
+                FASTAPI OPENCV AI STREAM
+              </span>
+            </div>
+            <div className="absolute top-3 right-3 z-30 flex items-center space-x-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-cyan-500/40">
+              <span className="text-[10px] font-mono text-cyan-300 font-bold">
+                ENGINE: YOLO26s-PERCEPTION | 30 FPS
+              </span>
+            </div>
+          </div>
+        ) : (
+          <video
+            ref={videoRef}
+            src={videoSource}
+            autoPlay
+            loop={isLooping}
+            muted={isMuted}
+            playsInline
+            className={`w-full h-full ${fitMode === 'contain' ? 'object-contain' : 'object-cover'}`}
+            onTimeUpdate={() => {
+              if (videoRef.current) setCurrentTime(videoRef.current.currentTime);
+            }}
+            onLoadedMetadata={() => {
+              if (videoRef.current) {
+                setDuration(videoRef.current.duration);
+                videoRef.current.loop = isLooping;
+                videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+              }
+            }}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            onEnded={() => {
+              if (isLooping && videoRef.current) {
+                videoRef.current.currentTime = 0;
+                videoRef.current.play().catch(() => {});
+              } else {
+                setIsPlaying(false);
+              }
+            }}
+          />
+        )}
 
         {/* Tactical Detection & Telemetry Overlay */}
-        {showHUD && (
+        {(!useDirectStream || videoSource.startsWith('blob:')) && showHUD && (
           <TacticalDetectionOverlay 
             detections={detections}
             cameraName={camera.name} 
@@ -294,6 +323,20 @@ export const LiveStreamPlayer: React.FC<LiveStreamPlayerProps> = ({
             title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
           >
             {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-cyan-400" />}
+          </button>
+
+          {/* Direct OpenCV Backend Stream Toggle */}
+          <button
+            onClick={() => setUseDirectStream(!useDirectStream)}
+            className={`px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold border transition-all flex items-center space-x-1.5 ${
+              useDirectStream
+                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/60 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
+                : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+            }`}
+            title="Toggle Direct OpenCV Backend Stream"
+          >
+            <Radio className="w-3.5 h-3.5" />
+            <span>AI STREAM: {useDirectStream ? 'ON' : 'OFF'}</span>
           </button>
 
           <span className="text-slate-400 text-[11px] hidden sm:inline ml-2">

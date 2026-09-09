@@ -42,21 +42,32 @@ export const AlertDetailModal: React.FC<AlertDetailModalProps> = ({
           </button>
         </div>
 
-        <div className="my-4 relative aspect-video rounded-2xl bg-black border border-slate-800 overflow-hidden flex items-center justify-center reticle-grid">
-          <div className="text-center p-4">
-            <Radio className="w-8 h-8 text-rose-500 mx-auto mb-2 animate-pulse" />
-            <p className="text-xs font-mono text-slate-400">
-              Tactical Evidence Snapshot [{alert.camera_id}]
-            </p>
-            <p className="text-[10px] font-mono text-cyan-400 mt-1">
-              Rule Triggered: {formatRuleTriggered(alert.rule_triggered)}
-            </p>
+        <div className="my-4 relative aspect-video rounded-2xl bg-black border border-slate-800 overflow-hidden flex items-center justify-center group">
+          <img
+            src={alert.evidence_frame_url || alert.snapshot_url || '/snapshots/master_surveillance_snapshot.jpg'}
+            alt={`Evidence frame ${alert.alert_id}`}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = '/snapshots/master_surveillance_snapshot.jpg';
+            }}
+          />
+
+          {/* Tactical HUD Overlay Brackets */}
+          <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-rose-500 pointer-events-none" />
+          <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-rose-500 pointer-events-none" />
+          <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-rose-500 pointer-events-none" />
+          <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-rose-500 pointer-events-none" />
+
+          {/* Top Metadata Badge */}
+          <div className="absolute top-3 left-3 ml-2 mt-1 flex items-center space-x-2 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-xl border border-rose-500/40 text-[10px] font-mono">
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+            <span className="font-bold text-white uppercase tracking-wider">EVIDENCE SNAPSHOT [{alert.camera_id}]</span>
           </div>
 
-          <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-rose-500" />
-          <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-rose-500" />
-          <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-rose-500" />
-          <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-rose-500" />
+          {/* Bottom Rule Trigger Badge */}
+          <div className="absolute bottom-3 left-3 ml-2 mb-1 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-xl border border-slate-800 text-[10px] font-mono text-cyan-400">
+            <span>Rule: {formatRuleTriggered(alert.rule_triggered)}</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 text-xs font-mono py-2">
@@ -98,7 +109,7 @@ export const AlertDetailModal: React.FC<AlertDetailModalProps> = ({
               }}
               className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-obsidian font-bold text-xs font-mono transition-colors shadow-tactical-glow"
             >
-              Acknowledge & Dispatch QRT
+              Acknowledge Alert
             </button>
           )}
         </div>

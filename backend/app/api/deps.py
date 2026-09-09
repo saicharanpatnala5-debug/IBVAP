@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.core.database import get_db
 from app.core.security import decode_access_token, UserRole
+from app.core.mode import is_production, is_demo
 from app.models.user import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token", auto_error=False)
@@ -18,9 +19,16 @@ async def get_current_user(
 ) -> Optional[User]:
     """
     Returns the authenticated user or None if token is absent/invalid.
-    Permits prototype / demo calls without blocking standard hackathon tests.
+    In production mode, missing token raises 401.
+    In demo mode, permits unauthenticated access for evaluation.
     """
     if not token:
+        if is_production():
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required in production mode",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         return None
 
     payload = decode_access_token(token)
@@ -46,8 +54,14 @@ def require_roles(allowed_roles: list[str]):
     """Enforce Role-Based Access Control (RBAC)."""
     async def role_checker(current_user: Optional[User] = Depends(get_current_user)):
         if not current_user:
-            # For SIH rapid evaluation mode, allow demo operator access
-            return True
+            if is_demo():
+                # Demo mode: allow unauthenticated access for SIH evaluation
+                return True
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         if current_user.role not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -55,3 +69,4 @@ def require_roles(allowed_roles: list[str]):
             )
         return current_user
     return role_checker
+

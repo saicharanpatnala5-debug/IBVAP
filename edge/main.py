@@ -70,7 +70,9 @@ def run_edge_daemon(duration_sec: int = 10, simulate_blackout: bool = False):
 
         queue_stats = edge_queue.get_queue_stats()
 
-        print(f"#{cycle:<6} | {cam_id:<8} | {result['fps']:<10.1f} | {result['risk_score']:<6} | {queue_stats['unsynced_events']:<14} | {backhaul_status:<12} | {sync_res['status']:<14}")
+        fps_val = result.get('fps', 0.0)
+        risk_val = result.get('risk_score', 0)
+        print(f"#{cycle:<6} | {cam_id:<8} | {fps_val:<10.1f} | {risk_val:<6} | {queue_stats['unsynced_events']:<14} | {backhaul_status:<12} | {sync_res['status']:<14}")
         time.sleep(1.0)
 
     print("-" * 82)

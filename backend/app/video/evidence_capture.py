@@ -29,8 +29,20 @@ class EvidenceCaptureService:
         filename = f"ev_{camera_id}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}.jpg"
         filepath = os.path.join(self.snapshots_dir, filename)
 
-        # Create dark night-vision tactical surveillance frame
-        img = Image.new("RGB", (640, 360), color=(18, 26, 22))
+        # Load realistic surveillance frame as base image if available
+        master_img_path = os.path.join(self.snapshots_dir, "master_surveillance_snapshot.jpg")
+        if not os.path.exists(master_img_path):
+            master_img_path = os.path.join("storage", "snapshots", "master_surveillance_snapshot.jpg")
+
+        if os.path.exists(master_img_path):
+            try:
+                base_img = Image.open(master_img_path).convert("RGB")
+                img = base_img.resize((640, 360), Image.Resampling.LANCZOS)
+            except Exception:
+                img = Image.new("RGB", (640, 360), color=(18, 26, 22))
+        else:
+            img = Image.new("RGB", (640, 360), color=(18, 26, 22))
+
         draw = ImageDraw.Draw(img)
 
         # Draw crosshair grid and border
@@ -43,7 +55,7 @@ class EvidenceCaptureService:
         # Timestamp and metadata watermark
         time_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
         draw.text((20, 20), f"[IBVAP BORDER SURVEILLANCE] {camera_id} - SECTOR B", fill=(0, 255, 128))
-        draw.text((20, 35), f"TIME: {time_str} | MODE: IR NIGHT ENHANCED", fill=(200, 200, 200))
+        draw.text((20, 35), f"TIME: {time_str} | MODE: AI TRACKING ENHANCED", fill=(200, 200, 200))
         draw.text((20, 50), f"EVENT: {event_title.upper()}", fill=(255, 70, 70))
 
         if plate_text:
@@ -56,11 +68,11 @@ class EvidenceCaptureService:
             draw.rectangle([bx1, by1, bx2, by2], outline=(255, 50, 50), width=3)
             draw.text((bx1, max(0, by1 - 15)), f"TARGET CONF: 94%", fill=(255, 50, 50))
         else:
-            # Default center box
-            draw.rectangle([260, 120, 380, 260], outline=(255, 50, 50), width=3)
-            draw.text((265, 100), "TARGET CONF: 94%", fill=(255, 50, 50))
+            # Default center box around vehicle in center lane
+            draw.rectangle([220, 180, 360, 310], outline=(255, 50, 50), width=2)
+            draw.text((225, 160), "TARGET: VEHICLE (95%)", fill=(255, 50, 50))
 
-        img.save(filepath, "JPEG", quality=85)
+        img.save(filepath, "JPEG", quality=90)
         return f"/storage/snapshots/{filename}"
 
     def generate_synthetic_evidence(

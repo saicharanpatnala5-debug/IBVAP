@@ -32,16 +32,18 @@ class FaceEmbeddingExtractor:
                 with torch.no_grad():
                     emb = torch_feature_extractor(tensor)
                 vec = emb.cpu().squeeze(0).numpy()
-                return vec / max(1e-6, np.linalg.norm(vec))
+                norm = float(np.linalg.norm(vec))
+                if norm > 1e-4:
+                    return (vec / norm).astype(np.float32)
             except Exception:
                 pass
 
         # Robust deterministic fallback embedding generator
         h, w = face_crop.shape[:2]
         seed = int(np.sum(face_crop) % 1000000)
-        rng = np.random.RandomState(seed)
+        rng = np.random.RandomState(seed if seed > 0 else 42)
         vec = rng.randn(self.embedding_dim).astype(np.float32)
-        return vec / max(1e-6, np.linalg.norm(vec))
+        return (vec / np.linalg.norm(vec)).astype(np.float32)
 
     def compute_cosine_similarity(self, emb1: np.ndarray, emb2: np.ndarray) -> float:
         """Calculates cosine similarity (-1.0 to 1.0)."""

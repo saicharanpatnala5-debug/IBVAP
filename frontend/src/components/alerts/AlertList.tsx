@@ -96,21 +96,38 @@ export const AlertList: React.FC<AlertListProps> = ({
                     : 'bg-slate-900/50 border-slate-800 hover:border-slate-700 border-l-4 border-l-amber-500'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center space-x-2">
-                    <AlertBadge severity={alert.severity} />
-                    <span className="text-xs font-mono font-bold text-slate-200">
-                      {alert.camera_id}
-                    </span>
+                <div className="flex items-start space-x-3">
+                  {/* Evidence Snapshot Thumbnail */}
+                  <div className="w-16 h-12 rounded-lg bg-black border border-slate-800 overflow-hidden flex-shrink-0 relative group">
+                    <img
+                      src={alert.evidence_frame_url || alert.snapshot_url || '/snapshots/master_surveillance_snapshot.jpg'}
+                      alt="Snapshot"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = '/snapshots/master_surveillance_snapshot.jpg';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <span className="text-[10px] font-mono text-slate-500">
-                    {formatTimestamp(alert.created_at)}
-                  </span>
-                </div>
 
-                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                  {alert.message}
-                </p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center space-x-2">
+                        <AlertBadge severity={alert.severity} />
+                        <span className="text-xs font-mono font-bold text-slate-200">
+                          {alert.camera_id}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-500">
+                        {formatTimestamp(alert.created_at)}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-300 mt-1 leading-relaxed line-clamp-2">
+                      {alert.message}
+                    </p>
+                  </div>
+                </div>
 
                 {/* Risk Score & Status */}
                 <div className="mt-2.5 flex items-center justify-between pt-2 border-t border-slate-800/60 text-[11px] font-mono">

@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Camera, TacticalDetection } from '../../types';
 import { TacticalDetectionOverlay } from './TacticalDetectionOverlay';
-import { getDetectionsForTime, registerVideoBlob, computeTelemetry } from '../../utils/detectionEngine';
+import { getDetectionsForTime, registerVideoBlob, computeTelemetry, captureAndInferFrame } from '../../utils/detectionEngine';
 import { CurrentVideoContext } from '../../store/useVideoPlayerState';
 
 interface TacticalIngestionHubProps {
@@ -150,6 +150,26 @@ export const TacticalIngestionHub: React.FC<TacticalIngestionHubProps> = ({
         videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
       }
     }, 100);
+
+    setTimeout(() => {
+      inferHubFrame();
+    }, 400);
+  };
+
+  const inferHubFrame = async () => {
+    if (!videoRef.current || videoRef.current.videoWidth === 0) return;
+    try {
+      const res = await captureAndInferFrame(
+        videoRef.current,
+        activeFootageTitle.replace(/[^a-zA-Z0-9]/g, '_'),
+        activeFootageUrl.includes('thermal')
+      );
+      if (res?.detections && res.detections.length > 0) {
+        setTrackingArrays(res.detections);
+      }
+    } catch {
+      // silent
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -257,7 +277,12 @@ export const TacticalIngestionHub: React.FC<TacticalIngestionHubProps> = ({
                     setDuration(videoRef.current.duration);
                     videoRef.current.loop = isLooping;
                     videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+                    setTimeout(inferHubFrame, 300);
                   }
+                }}
+                onPlay={() => {
+                  setIsPlaying(true);
+                  inferHubFrame();
                 }}
               />
 
@@ -269,10 +294,10 @@ export const TacticalIngestionHub: React.FC<TacticalIngestionHubProps> = ({
 
               {/* Real-time Multi-Class Tactical Detection Overlay */}
               <TacticalDetectionOverlay
-                detections={getDetectionsForTime(activeFootageTitle, currentTime, duration, activeFootageUrl)}
+                detections={trackingArrays.length > 0 ? trackingArrays : getDetectionsForTime(activeFootageTitle, currentTime, duration, activeFootageUrl)}
                 cameraName={activeFootageTitle}
                 fps={25.0}
-                coordinates="28.6139° N, 77.2090° E"
+                coordinates={duration > 0 && activeFootageUrl ? "28.6139° N, 77.2090° E" : undefined}
               />
             </div>
 

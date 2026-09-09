@@ -65,11 +65,19 @@ class FaceDetector:
     def detect_faces(self, frame: np.ndarray) -> List[FaceDetectionResult]:
         """
         Detects faces in frame, evaluates 5 landmarks and assesses quality.
+        Returns empty list if no faces are detected — never manufactures fake faces.
         """
         if frame is None or frame.size == 0:
             return []
 
         h, w = frame.shape[:2]
+        if h < 20 or w < 20:
+            return []
+
+        # Skip entirely blank frames (optimization)
+        if np.mean(frame) < 1.0:
+            return []
+
         results = []
 
         # Strategy 1: OpenCV Haar Cascade
@@ -103,20 +111,8 @@ class FaceDetector:
                     is_sharp=sharpness >= self.min_sharpness
                 ))
 
-        # Fallback synthetic detection if no physical faces found (e.g. synthetic test frames)
-        if not results:
-            results.append(FaceDetectionResult(
-                bbox=[0.46, 0.40, 0.54, 0.55],
-                confidence=0.92,
-                landmarks=[
-                    [0.485, 0.445], [0.515, 0.445],
-                    [0.500, 0.480],
-                    [0.490, 0.520], [0.510, 0.520]
-                ],
-                quality_score=84.5,
-                is_sharp=True
-            ))
-
+        # No synthetic fallback — if no faces detected, return empty list
         return results
 
 face_detector = FaceDetector()
+
